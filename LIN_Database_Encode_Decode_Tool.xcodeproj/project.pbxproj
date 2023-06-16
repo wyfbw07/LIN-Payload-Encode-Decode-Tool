@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		D307DCB32A39507E00F83B36 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D307DCB22A39507E00F83B36 /* main.cpp */; };
+		D307DCBC2A39561E00F83B36 /* ldf_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D307DCBA2A39561E00F83B36 /* ldf_parser.cpp */; };
+		D307DCCA2A39624E00F83B36 /* frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D307DCC82A39624E00F83B36 /* frame.cpp */; };
+		D307DCCD2A39626000F83B36 /* signal_encoding_type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D307DCCB2A39626000F83B36 /* signal_encoding_type.cpp */; };
+		D307DCD02A39626E00F83B36 /* signal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D307DCCE2A39626E00F83B36 /* signal.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +27,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D307DCAF2A39507E00F83B36 /* LIN_Databse_Encode_Decode_Tool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LIN_Databse_Encode_Decode_Tool; sourceTree = BUILT_PRODUCTS_DIR; };
+		D307DCAF2A39507E00F83B36 /* LIN_Database_Encode_Decode_Tool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LIN_Database_Encode_Decode_Tool; sourceTree = BUILT_PRODUCTS_DIR; };
 		D307DCB22A39507E00F83B36 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		D307DCBA2A39561E00F83B36 /* ldf_parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ldf_parser.cpp; sourceTree = "<group>"; };
+		D307DCBB2A39561E00F83B36 /* ldf_parser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ldf_parser.hpp; sourceTree = "<group>"; };
+		D307DCC82A39624E00F83B36 /* frame.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = frame.cpp; sourceTree = "<group>"; };
+		D307DCC92A39624E00F83B36 /* frame.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = frame.hpp; sourceTree = "<group>"; };
+		D307DCCB2A39626000F83B36 /* signal_encoding_type.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = signal_encoding_type.cpp; sourceTree = "<group>"; };
+		D307DCCC2A39626000F83B36 /* signal_encoding_type.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = signal_encoding_type.hpp; sourceTree = "<group>"; };
+		D307DCCE2A39626E00F83B36 /* signal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = signal.cpp; sourceTree = "<group>"; };
+		D307DCCF2A39626E00F83B36 /* signal.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = signal.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,7 +53,7 @@
 		D307DCA62A39507E00F83B36 = {
 			isa = PBXGroup;
 			children = (
-				D307DCB12A39507E00F83B36 /* LIN_Databse_Encode_Decode_Tool */,
+				D307DCB12A39507E00F83B36 /* LIN_Database_Encode_Decode_Tool */,
 				D307DCB02A39507E00F83B36 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -49,25 +61,41 @@
 		D307DCB02A39507E00F83B36 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D307DCAF2A39507E00F83B36 /* LIN_Databse_Encode_Decode_Tool */,
+				D307DCAF2A39507E00F83B36 /* LIN_Database_Encode_Decode_Tool */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D307DCB12A39507E00F83B36 /* LIN_Databse_Encode_Decode_Tool */ = {
+		D307DCB12A39507E00F83B36 /* LIN_Database_Encode_Decode_Tool */ = {
 			isa = PBXGroup;
 			children = (
 				D307DCB22A39507E00F83B36 /* main.cpp */,
+				D307DCBA2A39561E00F83B36 /* ldf_parser.cpp */,
+				D307DCBB2A39561E00F83B36 /* ldf_parser.hpp */,
+				D307DCC72A39622A00F83B36 /* ldf_parser_dependencies */,
 			);
-			path = LIN_Databse_Encode_Decode_Tool;
+			path = LIN_Database_Encode_Decode_Tool;
+			sourceTree = "<group>";
+		};
+		D307DCC72A39622A00F83B36 /* ldf_parser_dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				D307DCC82A39624E00F83B36 /* frame.cpp */,
+				D307DCC92A39624E00F83B36 /* frame.hpp */,
+				D307DCCB2A39626000F83B36 /* signal_encoding_type.cpp */,
+				D307DCCC2A39626000F83B36 /* signal_encoding_type.hpp */,
+				D307DCCE2A39626E00F83B36 /* signal.cpp */,
+				D307DCCF2A39626E00F83B36 /* signal.hpp */,
+			);
+			path = ldf_parser_dependencies;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D307DCAE2A39507E00F83B36 /* LIN_Databse_Encode_Decode_Tool */ = {
+		D307DCAE2A39507E00F83B36 /* LIN_Database_Encode_Decode_Tool */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D307DCB62A39507E00F83B36 /* Build configuration list for PBXNativeTarget "LIN_Databse_Encode_Decode_Tool" */;
+			buildConfigurationList = D307DCB62A39507E00F83B36 /* Build configuration list for PBXNativeTarget "LIN_Database_Encode_Decode_Tool" */;
 			buildPhases = (
 				D307DCAB2A39507E00F83B36 /* Sources */,
 				D307DCAC2A39507E00F83B36 /* Frameworks */,
@@ -77,9 +105,9 @@
 			);
 			dependencies = (
 			);
-			name = LIN_Databse_Encode_Decode_Tool;
+			name = LIN_Database_Encode_Decode_Tool;
 			productName = LIN_Databse_Encode_Decode_Tool;
-			productReference = D307DCAF2A39507E00F83B36 /* LIN_Databse_Encode_Decode_Tool */;
+			productReference = D307DCAF2A39507E00F83B36 /* LIN_Database_Encode_Decode_Tool */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -96,7 +124,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D307DCAA2A39507E00F83B36 /* Build configuration list for PBXProject "LIN_Databse_Encode_Decode_Tool" */;
+			buildConfigurationList = D307DCAA2A39507E00F83B36 /* Build configuration list for PBXProject "LIN_Database_Encode_Decode_Tool" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -109,7 +137,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D307DCAE2A39507E00F83B36 /* LIN_Databse_Encode_Decode_Tool */,
+				D307DCAE2A39507E00F83B36 /* LIN_Database_Encode_Decode_Tool */,
 			);
 		};
 /* End PBXProject section */
@@ -120,6 +148,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D307DCB32A39507E00F83B36 /* main.cpp in Sources */,
+				D307DCBC2A39561E00F83B36 /* ldf_parser.cpp in Sources */,
+				D307DCCD2A39626000F83B36 /* signal_encoding_type.cpp in Sources */,
+				D307DCCA2A39624E00F83B36 /* frame.cpp in Sources */,
+				D307DCD02A39626E00F83B36 /* signal.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,7 +296,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D307DCAA2A39507E00F83B36 /* Build configuration list for PBXProject "LIN_Databse_Encode_Decode_Tool" */ = {
+		D307DCAA2A39507E00F83B36 /* Build configuration list for PBXProject "LIN_Database_Encode_Decode_Tool" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D307DCB42A39507E00F83B36 /* Debug */,
@@ -273,7 +305,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D307DCB62A39507E00F83B36 /* Build configuration list for PBXNativeTarget "LIN_Databse_Encode_Decode_Tool" */ = {
+		D307DCB62A39507E00F83B36 /* Build configuration list for PBXNativeTarget "LIN_Database_Encode_Decode_Tool" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D307DCB72A39507E00F83B36 /* Debug */,
