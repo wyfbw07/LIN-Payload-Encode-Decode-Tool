@@ -30,12 +30,11 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Frame& frm);
 
 private:
-    
-    // Name of the Message
-    std::string name{};
-    std::string publisher;
+
     int id{};
     int messageSize{};
+    std::string name{};
+    std::string publisher;
     std::vector<std::pair<std::string, int> > signalsName;
     
 };

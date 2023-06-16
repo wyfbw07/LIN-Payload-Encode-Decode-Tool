@@ -14,11 +14,11 @@ int main(int argc, char* argv[])
 {
 //    int operationChoice = 3;
     // Create a class to store DBC info
-    LdfParser dbcFile;
+    LdfParser ldfFile;
     try {
         // Load file from path. Parse and store the content
-        dbcFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/ldf_test.ldf");
-        std::cout << dbcFile << std::endl;
+        ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/ldf_test.ldf");
+        std::cout << ldfFile << std::endl;
     }
     catch (std::invalid_argument& err) {
         std::cout << "[Exception catched] " << err.what() << '\n';
