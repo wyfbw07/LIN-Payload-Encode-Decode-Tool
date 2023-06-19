@@ -21,7 +21,7 @@ bool LdfParser::parse(const std::string& filePath) {
         loadAndParseFromFile(ldfFile);
     }
     else {
-        throw std::invalid_argument("Could not open CAN database file.");
+        throw std::invalid_argument("Could not open LDF database file.");
         return false;
     }
     // Parse complete, mark as successful

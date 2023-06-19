@@ -22,7 +22,7 @@ public:
     // A bool is used to indicate whether parsing succeeds or not
     bool parse(const std::string& filePath);
     // Decode
-    std::unordered_map<std::string, double> decode(int msgId, unsigned char payLoad[], int dlc);
+    std::map<std::string, double> decode(int msgId, unsigned char payLoad[], int dlc);
     friend std::ostream& operator<<(std::ostream& os, const LdfParser& ldfFile);
 
 private:
