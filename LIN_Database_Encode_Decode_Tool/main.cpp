@@ -10,7 +10,7 @@
 #include "ldf_parser.hpp"
 
  // defining main with arguments
-int main(int argc, char* argv[])
+int main()
 {
 //    int operationChoice = 3;
     // Create a class to store DBC info

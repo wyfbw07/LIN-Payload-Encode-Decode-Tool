@@ -8,6 +8,7 @@
 #ifndef signal_encoding_type_hpp
 #define signal_encoding_type_hpp
 
+#include <array>
 #include <string>
 #include <vector>
 

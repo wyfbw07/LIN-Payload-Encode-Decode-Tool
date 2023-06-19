@@ -8,6 +8,7 @@
 #ifndef ldf_parser_hpp
 #define ldf_parser_hpp
 
+#include <map>
 #include <string>
 #include "ldf_parser_dependencies/frame.hpp"
 #include "ldf_parser_dependencies/signal.hpp"
@@ -26,15 +27,15 @@ public:
 
 private:
 
-    typedef std::unordered_map<int, Frame>::iterator framesLibrary_iterator;
-    typedef std::unordered_map<std::string, Signal>::iterator signalsLibrary_iterator;
-    typedef std::unordered_map<std::string, SignalEncodingType>::iterator sigEncodingTypeLibrary_iterator;
+    typedef std::map<int, Frame>::iterator framesLibrary_iterator;
+    typedef std::map<std::string, Signal>::iterator signalsLibrary_iterator;
+    typedef std::map<std::string, SignalEncodingType>::iterator sigEncodingTypeLibrary_iterator;
     // A hash table that stores all info of frames. <Frame id, Frame object>
-    std::unordered_map<int, Frame> framesLibrary{};
+    std::map<int, Frame> framesLibrary{};
     // A hash table that stores all info of signals. <Signal name, Signal object>
-    std::unordered_map<std::string, Signal> signalsLibrary{};
+    std::map<std::string, Signal> signalsLibrary{};
     // A hash table that stores all info of signal encoding types. <encoding type name, Signal Encoding type object>
-    std::unordered_map<std::string, SignalEncodingType> sigEncodingTypeLibrary{};
+    std::map<std::string, SignalEncodingType> sigEncodingTypeLibrary{};
     bool isEmptyLibrary = true;
     bool isEmptySignalsLibrary = true;
     // This vector contains all the frames which got parsed from the LDF-File

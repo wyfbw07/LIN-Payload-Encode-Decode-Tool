@@ -5,7 +5,9 @@
 //  Created by Yifan Wang on 6/14/23.
 //
 
+#include <limits>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include "signal_encoding_type.hpp"
 

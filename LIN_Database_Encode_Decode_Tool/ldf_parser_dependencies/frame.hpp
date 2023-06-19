@@ -10,8 +10,6 @@
 
 #include <string>
 #include <vector>
-#include <iosfwd>
-#include <unordered_map>
 #include "signal.hpp"
 
 class Frame {
