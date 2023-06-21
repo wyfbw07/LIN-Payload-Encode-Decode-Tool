@@ -8,14 +8,14 @@
 #ifndef SIGNAL_H
 #define SIGNAL_H
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
+#include "signal_encoding_type.hpp"
 
 constexpr int MAX_MSG_LEN = 8;
 constexpr int MAX_BIT_INDEX_uint64_t = (sizeof(uint64_t) * CHAR_BIT) - 1;
 
-// Respresents a signal. Contains all signal info.
 class Signal {
 
 public:
@@ -27,6 +27,8 @@ public:
     // Setters
     void setName(const std::string& name) { this->name = name; }
     void setStartBit(const int& startBit) { this->startBit = startBit; }
+    void setEncodingType(SignalEncodingType* encodingType) {this->encodingType = encodingType; }
+    double decodeSignal(unsigned char rawPayload[MAX_MSG_LEN], int messageSize);
     // Operator overload, allows parsing of signals info
     friend std::istream& operator>>(std::istream& in, Signal& sig);
     friend std::ostream& operator<<(std::ostream& os, const Signal& sig);
@@ -38,7 +40,7 @@ private:
     int signalSize{};
     std::string name{};
     std::string publisher{};
-    std::string encodingType{};
+    SignalEncodingType* encodingType{};
     std::vector<std::string> subscribers;
     
 };

@@ -18,8 +18,11 @@ public:
     
     // Getters
     std::string getName() const { return name; }
-    int getMinValue(double& rawValue) const { return getMinAndMaxValue(rawValue).first; }
-    int getMaxValue(double& rawValue) const { return getMinAndMaxValue(rawValue).second; }
+    int getMinValue(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[0]; }
+    int getMaxValue(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[1]; }
+    int getFactor(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[2]; }
+    int getOffset(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[3]; }
+    std::string getUnit(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).second; }
     // Setter
     void setName(const std::string& name) { this->name = name; }
     // Overloads
@@ -29,9 +32,9 @@ public:
 private:
 
     std::string name;
-    std::pair<int, int> getMinAndMaxValue(double& rawValue) const;
     std::vector<std::pair<int, std::string> > logicalValues;
     std::vector<std::pair<std::array<int, 4>, std::string> > physicalValues;
+    std::pair<std::array<int, 4>, std::string> getPhysicalValuesForRawValue(int64_t& rawValue) const;
 
 };
 

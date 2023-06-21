@@ -8,6 +8,7 @@
 #ifndef frame_hpp
 #define frame_hpp
 
+#include <map>
 #include <string>
 #include <vector>
 #include "signal.hpp"

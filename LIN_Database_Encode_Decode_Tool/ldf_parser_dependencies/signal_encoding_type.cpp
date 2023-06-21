@@ -11,18 +11,19 @@
 #include <iostream>
 #include "signal_encoding_type.hpp"
 
-std::pair<int, int> SignalEncodingType::getMinAndMaxValue(double& rawValue) const {
+std::pair<std::array<int, 4>, std::string> SignalEncodingType::getPhysicalValuesForRawValue(int64_t& rawValue) const {
     int min, max;
     if (physicalValues.size() != 0) {
         for (size_t i = 0; i < physicalValues.size(); i++) {
             min = (physicalValues[i].first)[0];
             max = (physicalValues[i].first)[1];
             if ((rawValue > min) && (rawValue < max)) {
-                return std::make_pair(min, max);
+                return physicalValues[i];
             }
         }
     }
-    return std::make_pair(0, 0);
+    std::pair<std::array<int, 4>, std::string> emptyResult{};
+    return emptyResult;
 }
 
 std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) {
