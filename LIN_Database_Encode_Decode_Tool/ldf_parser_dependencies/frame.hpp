@@ -20,10 +20,13 @@ public:
     // Getters
     int getId() const { return id; }
     int getDlc() const { return messageSize; }
+    std::string getName() const { return name; }
     std::vector<std::pair<std::string, int> > getSignalsName() const { return signalsName; }
     // Setters
-    std::string getName() const { return name; }
+    void setId(const int& id) { this->id = id; }
     void setName(const std::string& name) { this->name = name; }
+    void setMessageSize(const int& messageSize) { this->messageSize = messageSize; }
+    void setPublisher(const std::string& publisher) { this->publisher = publisher; }
     // Overloads
     friend std::istream& operator>>(std::istream& in, Frame& frm);
     friend std::ostream& operator<<(std::ostream& os, const Frame& frm);

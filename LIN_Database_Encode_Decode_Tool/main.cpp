@@ -15,7 +15,7 @@ int main()
     // Create a class to store DBC info
     LdfParser ldfFile;
     try {
-//        ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/exampleLIN.ldf");
+        // ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/exampleLIN.ldf");
         ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/ldf_test.ldf");
         std::cout << ldfFile;
         // MARK: - Function call choices
@@ -33,7 +33,7 @@ int main()
             for (auto& decodedSig : result) {
                 std::cout << "\t[Signal] " << decodedSig.first << ": " << decodedSig.second << std::endl;
             }
-            /*
+            /* Sample output should look like:
              Decoded signal values:
                  [Signal] Head_Position: 3
                  [Signal] Horizontal_Position: 7

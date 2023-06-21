@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <iostream>
 #include "signal_encoding_type.hpp"
+#include "ldf_parser_helper.hpp"
 
 std::pair<std::array<int, 4>, std::string> SignalEncodingType::getPhysicalValuesForRawValue(int64_t& rawValue) const {
     int min, max;
@@ -27,7 +28,8 @@ std::pair<std::array<int, 4>, std::string> SignalEncodingType::getPhysicalValues
 }
 
 std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) {
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    
     std::string valueType; char semi;
     while (in >> valueType && valueType != "}") {
         // Read info based on value types
@@ -47,6 +49,7 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
             sigEncodingType.logicalValues.push_back(std::make_pair(value, valueDescription));
         }
     }
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return in;
 }
 

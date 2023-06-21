@@ -43,14 +43,18 @@ bool LdfParser::parse(const std::string& filePath) {
     sigEncodingTypeLibrary = std::map<std::string, SignalEncodingType>{};
     // Display corresponding error
     if (isEmptySignalsLibrary) {
-        std::cerr << "Cannot find signals infomation in LDF file. Check LDF validity and parse again. " << std::endl;
-        std::cerr << "Cannot parse signals infomation in LDF file. Check LDF validity and parse again. " << std::endl;
+        std::cerr << "Cannot find signals infomation in LDF file."
+        << " Cannot parse signals representation infomation due to missing signals infomation in LDF file."
+        << " Check LDF validity and parse again." << std::endl;
     }
     if (isEmptyFramesLibrary) {
-        std::cerr << "Cannot parse frames infomation due to missing signals infomation in LDF file. Check LDF validity and parse again." << std::endl;
+        std::cerr << "Cannot parse frames infomation due to missing signals infomation in LDF file."
+        << " Cannot parse signals representation infomation due to missing signals and frames infomation in LDF file."
+        << " Check LDF validity and parse again." << std::endl;
     }
     if (isEmptySigEncodingTypeLibrary) {
-        std::cerr << "Cannot find signal encoding types infomation in LDF file. Check LDF validity and parse again. " << std::endl;
+        std::cerr << "Cannot find signal encoding types infomation in LDF file."
+        << " Check LDF validity and parse again. " << std::endl;
     }
     // Reset flags
     isEmptyFramesLibrary = true; isEmptySignalsLibrary = true; isEmptySigEncodingTypeLibrary = true;
@@ -63,17 +67,18 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
     std::string lineInitial;
     // Read the file line by line
     while (getline(in, line)) {
-        // Get fist word in each line
-        std::stringstream lineStream(line);
-        getline(lineStream, lineInitial, '{');
-        // Remove white spaces
-        lineInitial.erase(remove(lineInitial.begin(), lineInitial.end(), ' '), lineInitial.end());
-        std::cout << lineInitial << std::endl;
+        lineInitial = Utils::getWordBeforeDelimitor(line, '{');
         // Look for signal encoding types
         if (lineInitial == "Signal_encoding_types") {
+            // Loop through each encoding type
             std::string sigEncodingTypeName;
-            while (in >> sigEncodingTypeName && sigEncodingTypeName != "}") {
-                // Parse signal encoding types
+            while(getline(in, sigEncodingTypeName)) {
+                sigEncodingTypeName = Utils::getWordBeforeDelimitor(sigEncodingTypeName, '{');
+                std::cout << sigEncodingTypeName << std::endl;
+                // Stop condition
+                if (sigEncodingTypeName == "}") {
+                    break;
+                }
                 SignalEncodingType sigEncodingType;
                 sigEncodingType.setName(sigEncodingTypeName);
                 in >> sigEncodingType;
@@ -113,7 +118,7 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
             }
             isEmptySignalsLibrary = false;
         }
-        else if (lineInitial == "Frames") {
+        else if ((lineInitial == "Frames") && (!isEmptySignalsLibrary)){
             std::string frameName;
             while (in >> frameName && frameName != "}") {
                 // Parse frame
@@ -155,8 +160,6 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
         }
         else if ((lineInitial == "Signal_representation")
                  && (!isEmptySignalsLibrary) && (!isEmptySigEncodingTypeLibrary)) {
-            // Go to next line
-//            in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::string encodingTypeName, subscriber;
             while (in >> encodingTypeName && encodingTypeName != "}") {
                 // Adapt to different format of a ldf file
@@ -200,9 +203,9 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                     }
                 }
             }
+            // TODO: Integrity check: all signals should have corresponding encoding type
+            
         }
-        // Skip the rest of the line for uninterested data and make sure we can get a whole new line in the next iteration
-//        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
     
 }
