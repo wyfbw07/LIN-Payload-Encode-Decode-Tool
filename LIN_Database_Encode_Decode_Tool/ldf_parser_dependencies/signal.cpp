@@ -11,36 +11,6 @@
 #include <iostream>
 #include "signal.hpp"
 
-std::istream& operator>>(std::istream& in, Signal& sig) {
-    char semi;
-    // Read signal size and initial value
-    in >> sig.signalSize >> semi >> sig.initValue >> semi;
-    std::string nodeName; std::vector<std::string> nodeNames;
-    while (in >> nodeName && nodeName != ";") {
-        // Adapt to different format of a ldf file
-        if (!nodeName.empty()) {
-            char lastChar = nodeName.back();
-            if (lastChar == ';' || lastChar == ',') {
-                nodeName.pop_back();
-            }
-            nodeNames.push_back(nodeName);
-            if (lastChar == ';') {
-                break;
-            }
-        }
-    }
-    // Store publisher and subscribers
-    if (nodeNames.size() > 0) {
-        sig.publisher = nodeNames[0];
-        if (nodeNames.size() > 1) {
-            for (size_t i = 1; i < nodeNames.size(); i++) {
-                sig.subscribers.push_back(nodeNames[i]);
-            }
-        }
-    }
-    return in;
-}
-
 std::ostream& operator<<(std::ostream& os, const Signal& sig){
     std::cout << "[Signal] " << sig.name << ": " << std::endl;
     std::cout << "\t" << std::left << std::setw(20) << "size: " << sig.signalSize << std::endl;

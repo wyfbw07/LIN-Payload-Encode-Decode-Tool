@@ -28,28 +28,43 @@ std::pair<std::array<int, 4>, std::string> SignalEncodingType::getPhysicalValues
 }
 
 std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) {
-
     
-    std::string valueType; char semi;
-    while (in >> valueType && valueType != "}") {
-        // Read info based on value types
-        if (valueType == "physical_value,") {
-            int min, max, factor, offset;  std::string unit;
-            in >> min >> semi >> max >> semi >> factor >> semi >> offset >> semi;
-            // if unit description exists, read it
-            if (semi == ',') {
-                in >> std::quoted(unit);
+    std::string valueType;
+    while(getline(in, valueType)) {
+        std::stringstream lineStream(valueType);
+        valueType = Utils::getLine(lineStream, ',');
+        // Stop condition
+        if (valueType == "}") {
+            break;
+        }
+        if (valueType == "physical_value") {
+            int min, max, factor, offset; std::string unit;
+            min = std::stoi(Utils::getLine(lineStream, ','));
+            max = std::stoi(Utils::getLine(lineStream, ','));
+            factor = std::stoi(Utils::getLine(lineStream, ','));
+            offset = std::stoi(Utils::getLine(lineStream, ','));
+            unit = Utils::getLine(lineStream, ';');
+            // Remove quotation marks if unit exists
+            if (unit != "") {
+                std::stringstream unitStream(unit);
+                unitStream >> std::quoted(unit);
             }
             // Store physical value info
             std::array<int, 4> tmpArray = {min, max, factor, offset};
             sigEncodingType.physicalValues.push_back(std::make_pair(tmpArray, unit));
-        }else if (valueType == "logical_value,") {
+        }
+        else if (valueType == "logical_value") {
             int value; std::string valueDescription;
-            in >> value >> semi >> std::quoted(valueDescription);
+            value = std::stoi(Utils::getLine(lineStream, ','));
+            valueDescription = Utils::getLine(lineStream, ';');
+            // Remove quotation marks
+            if (valueDescription != "") {
+                std::stringstream unitStream(valueDescription);
+                unitStream >> std::quoted(valueDescription);
+            }
             sigEncodingType.logicalValues.push_back(std::make_pair(value, valueDescription));
         }
     }
-    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return in;
 }
 

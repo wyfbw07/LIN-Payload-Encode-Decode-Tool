@@ -27,16 +27,19 @@ public:
     // Setters
     void setName(const std::string& name) { this->name = name; }
     void setStartBit(const int& startBit) { this->startBit = startBit; }
+    void setInitValue(const int& initValue) { this->initValue = initValue; }
+    void setSignalSize(const int& signalSize) { this->signalSize = signalSize; }
+    void setPublisher(const std::string& publisher) { this->publisher = publisher; }
     void setEncodingType(SignalEncodingType* encodingType) {this->encodingType = encodingType; }
+    void setSubscribers(const std::vector<std::string>& subscribers) { this->subscribers = subscribers; }
     double decodeSignal(unsigned char rawPayload[MAX_MSG_LEN], int messageSize);
     // Operator overload, allows parsing of signals info
-    friend std::istream& operator>>(std::istream& in, Signal& sig);
     friend std::ostream& operator<<(std::ostream& os, const Signal& sig);
 
 private:
 
-    int initValue{};
     int startBit{};
+    int initValue{};
     int signalSize{};
     std::string name{};
     std::string publisher{};

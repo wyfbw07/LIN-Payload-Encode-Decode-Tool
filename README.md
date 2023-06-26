@@ -24,7 +24,7 @@ This tool uses exceptions to eraise errors. As a result, running and calling fun
 
 ## Function Calls
 
-### Load and Parse DBC File
+### Load and Parse LDF File
 
 ```c++
 bool LdfParser::parse(const std::string& filePath);
@@ -44,7 +44,7 @@ ldfFile.parse("/Users/filelocation/ldf_test.ldf");
 
 A instance of the class LdfParser must be created first, and use the parse function to load and parse the LDF file. All frames, signals and signal encoding types info will then be stored. 
 
-Again, <u>this function can be called ONLY once.</u> It does not allow repeated calls of this function. There is little use cases that you would want to re-parse the file. However if you do want to re-parse, destroy the existing class instance and create a new one to parse again.
+<u>This function can be called only once.</u> Repeated calls will be ignored. There is little use cases that you would want to re-parse the file. However if you do want to re-parse, destroy the existing class instance and create a new one to parse again.
 
 For frame classes, these information will be parsed: 
 - Frame name
@@ -103,10 +103,11 @@ Reference PDF for LIN bus [LIN Specification Package Revision 2.2A](https://cdn.
 
 ## What's New
 
-- This tool now supports parsing of LDF file.
+- This tool now supports decoding of LDF frames.
 
   
 
 ## To Dos
 
-- Decoding and encoding of LIN frame payloads.
+- Encoding of LIN frame payloads.
+- Complete reconstructing LDF parser so that it can parse normally even if the file content structure is not exactly identical.

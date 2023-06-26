@@ -27,6 +27,7 @@ public:
     void setName(const std::string& name) { this->name = name; }
     void setMessageSize(const int& messageSize) { this->messageSize = messageSize; }
     void setPublisher(const std::string& publisher) { this->publisher = publisher; }
+    void addSignalInfo (const std::pair<std::string, int>& sigName) {this->signalsName.push_back(sigName); }
     // Overloads
     friend std::istream& operator>>(std::istream& in, Frame& frm);
     friend std::ostream& operator<<(std::ostream& os, const Frame& frm);
