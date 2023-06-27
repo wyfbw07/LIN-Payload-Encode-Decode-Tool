@@ -11,29 +11,6 @@
 #include <iostream>
 #include "frame.hpp"
 
-//std::istream& operator>>(std::istream& in, Frame& frm){
-//    char semi;
-//    // Read frame id, publisher, and frame size
-//    in >> frm.id >> semi >> frm.publisher >> frm.messageSize;
-//    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-//    // Remove trailling comma
-//    if (!frm.publisher.empty()){
-//        frm.publisher.pop_back();
-//    }
-//    // Read signal info under the frame
-//    std::string sigName; int startBit;
-//    while (in >> sigName && sigName != "}") {
-//        // Remove trailling comma
-//        if (!sigName.empty()){
-//            sigName.pop_back();
-//        }
-//        in >> startBit;
-//        frm.signalsName.push_back(std::make_pair(sigName, startBit));
-//        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-//    }
-//    return in;
-//}
-
 std::ostream& operator<<(std::ostream& os, const Frame& frm){
     std::cout << "[Frame] " << frm.name << ": " << std::endl;
     std::cout << "\t" << std::left << std::setw(20) << "id: " << frm.id << std::endl;
@@ -55,5 +32,3 @@ std::ostream& operator<<(std::ostream& os, const Frame& frm){
     }
     return os;
 }
-
-

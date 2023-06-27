@@ -29,7 +29,6 @@ public:
     void setPublisher(const std::string& publisher) { this->publisher = publisher; }
     void addSignalInfo (const std::pair<std::string, int>& sigName) {this->signalsName.push_back(sigName); }
     // Overloads
-    friend std::istream& operator>>(std::istream& in, Frame& frm);
     friend std::ostream& operator<<(std::ostream& os, const Frame& frm);
 
 private:

@@ -12,7 +12,6 @@
 		D307DCCA2A39624E00F83B36 /* frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D307DCC82A39624E00F83B36 /* frame.cpp */; };
 		D307DCCD2A39626000F83B36 /* signal_encoding_type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D307DCCB2A39626000F83B36 /* signal_encoding_type.cpp */; };
 		D307DCD02A39626E00F83B36 /* signal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D307DCCE2A39626E00F83B36 /* signal.cpp */; };
-		D370F7812A419B4A003F21BE /* ldf_parser_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D370F77F2A419B4A003F21BE /* ldf_parser_helper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,7 +37,6 @@
 		D307DCCC2A39626000F83B36 /* signal_encoding_type.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = signal_encoding_type.hpp; sourceTree = "<group>"; };
 		D307DCCE2A39626E00F83B36 /* signal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = signal.cpp; sourceTree = "<group>"; };
 		D307DCCF2A39626E00F83B36 /* signal.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = signal.hpp; sourceTree = "<group>"; };
-		D370F77F2A419B4A003F21BE /* ldf_parser_helper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ldf_parser_helper.cpp; sourceTree = "<group>"; };
 		D370F7802A419B4A003F21BE /* ldf_parser_helper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ldf_parser_helper.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,14 +81,13 @@
 		D307DCC72A39622A00F83B36 /* ldf_parser_dependencies */ = {
 			isa = PBXGroup;
 			children = (
-				D307DCC82A39624E00F83B36 /* frame.cpp */,
-				D307DCC92A39624E00F83B36 /* frame.hpp */,
+				D370F7802A419B4A003F21BE /* ldf_parser_helper.hpp */,
 				D307DCCB2A39626000F83B36 /* signal_encoding_type.cpp */,
 				D307DCCC2A39626000F83B36 /* signal_encoding_type.hpp */,
+				D307DCC82A39624E00F83B36 /* frame.cpp */,
+				D307DCC92A39624E00F83B36 /* frame.hpp */,
 				D307DCCE2A39626E00F83B36 /* signal.cpp */,
 				D307DCCF2A39626E00F83B36 /* signal.hpp */,
-				D370F77F2A419B4A003F21BE /* ldf_parser_helper.cpp */,
-				D370F7802A419B4A003F21BE /* ldf_parser_helper.hpp */,
 			);
 			path = ldf_parser_dependencies;
 			sourceTree = "<group>";
@@ -157,7 +154,6 @@
 				D307DCCD2A39626000F83B36 /* signal_encoding_type.cpp in Sources */,
 				D307DCCA2A39624E00F83B36 /* frame.cpp in Sources */,
 				D307DCD02A39626E00F83B36 /* signal.cpp in Sources */,
-				D370F7812A419B4A003F21BE /* ldf_parser_helper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

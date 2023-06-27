@@ -12,62 +12,6 @@
 #include "signal_encoding_type.hpp"
 #include "ldf_parser_helper.hpp"
 
-std::pair<std::array<int, 4>, std::string> SignalEncodingType::getPhysicalValuesForRawValue(int64_t& rawValue) const {
-    int min, max;
-    if (physicalValues.size() != 0) {
-        for (size_t i = 0; i < physicalValues.size(); i++) {
-            min = (physicalValues[i].first)[0];
-            max = (physicalValues[i].first)[1];
-            if ((rawValue > min) && (rawValue < max)) {
-                return physicalValues[i];
-            }
-        }
-    }
-    std::pair<std::array<int, 4>, std::string> emptyResult{};
-    return emptyResult;
-}
-
-std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) {
-    
-    std::string valueType;
-    while(getline(in, valueType)) {
-        std::stringstream lineStream(valueType);
-        valueType = Utils::getLine(lineStream, ',');
-        // Stop condition
-        if (valueType == "}") {
-            break;
-        }
-        if (valueType == "physical_value") {
-            int min, max, factor, offset; std::string unit;
-            min = std::stoi(Utils::getLine(lineStream, ','));
-            max = std::stoi(Utils::getLine(lineStream, ','));
-            factor = std::stoi(Utils::getLine(lineStream, ','));
-            offset = std::stoi(Utils::getLine(lineStream, ','));
-            unit = Utils::getLine(lineStream, ';');
-            // Remove quotation marks if unit exists
-            if (unit != "") {
-                std::stringstream unitStream(unit);
-                unitStream >> std::quoted(unit);
-            }
-            // Store physical value info
-            std::array<int, 4> tmpArray = {min, max, factor, offset};
-            sigEncodingType.physicalValues.push_back(std::make_pair(tmpArray, unit));
-        }
-        else if (valueType == "logical_value") {
-            int value; std::string valueDescription;
-            value = std::stoi(Utils::getLine(lineStream, ','));
-            valueDescription = Utils::getLine(lineStream, ';');
-            // Remove quotation marks
-            if (valueDescription != "") {
-                std::stringstream unitStream(valueDescription);
-                unitStream >> std::quoted(valueDescription);
-            }
-            sigEncodingType.logicalValues.push_back(std::make_pair(value, valueDescription));
-        }
-    }
-    return in;
-}
-
 std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncodingType) {
     std::cout << "[Signal Encoding Type] " << sigEncodingType.name << ": " << std::endl;
     if (sigEncodingType.logicalValues.size() != 0) {
@@ -91,4 +35,54 @@ std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncoding
         }
     }
     return os;
+}
+
+std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) {
+    std::string singleValueType = Utils::getLine(in, ';');
+    while (singleValueType != "") {
+        std::stringstream singleValueTypeStream(singleValueType);
+        std::string valueTypeName = Utils::getLine(singleValueTypeStream, ',');
+        if (valueTypeName == "physical_value") {
+            int min = std::stoi(Utils::getLine(singleValueTypeStream, ','));
+            int max = std::stoi(Utils::getLine(singleValueTypeStream, ','));
+            int factor = std::stoi(Utils::getLine(singleValueTypeStream, ','));
+            int offset = std::stoi(Utils::getLine(singleValueTypeStream, ','));
+            std::string unit = Utils::getLine(singleValueTypeStream, ';');
+            // Remove quotation marks if unit exists
+            if (unit != "") {
+                std::stringstream unitStream(unit);
+                unitStream >> std::quoted(unit);
+            }
+            // Store physical value info
+            std::array<int, 4> tmpArray = {min, max, factor, offset};
+            sigEncodingType.physicalValues.push_back(std::make_pair(tmpArray, unit));
+        }
+        else if (valueTypeName == "logical_value") {
+            int value = std::stoi(Utils::getLine(singleValueTypeStream, ','));
+            std::string valueDescription = Utils::getLine(singleValueTypeStream, ';');
+            // Remove quotation marks
+            if (valueDescription != "") {
+                std::stringstream unitStream(valueDescription);
+                unitStream >> std::quoted(valueDescription);
+            }
+            sigEncodingType.logicalValues.push_back(std::make_pair(value, valueDescription));
+        }
+        // Get next value type
+        singleValueType = Utils::getLine(in, '}');
+    }
+    return in;
+}
+
+std::pair<std::array<int, 4>, std::string> SignalEncodingType::getPhysicalValuesForRawValue(int64_t& rawValue) const {
+    if (physicalValues.size() != 0) {
+        for (size_t i = 0; i < physicalValues.size(); i++) {
+            int min = (physicalValues[i].first)[0];
+            int max = (physicalValues[i].first)[1];
+            if ((rawValue > min) && (rawValue < max)) {
+                return physicalValues[i];
+            }
+        }
+    }
+    std::pair<std::array<int, 4>, std::string> emptyResult{};
+    return emptyResult;
 }

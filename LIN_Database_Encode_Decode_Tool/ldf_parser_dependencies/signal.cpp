@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include "signal.hpp"
+#include "ldf_parser_helper.hpp"
 
 std::ostream& operator<<(std::ostream& os, const Signal& sig){
     std::cout << "[Signal] " << sig.name << ": " << std::endl;
@@ -28,6 +29,34 @@ std::ostream& operator<<(std::ostream& os, const Signal& sig){
         std::cout << "\tNo subscribers";
     }
     return os;
+}
+
+std::istream& operator>>(std::istream& in, Signal& sig) {
+    // Parse signal info
+    std::string sigName = Utils::getLine(in, ':');
+    int sigSize = std::stoi (Utils::getLine(in, ','));
+    int initValue = std::stoi (Utils::getLine(in, ','));
+    std::string publisher = Utils::getLine(in, ',');
+    std::string subscriber = Utils::getLine(in, ',');
+    std::vector<std::string> subscribers;
+    while (subscriber != "") {
+        // Remove semi colon if there exists one
+        char lastCharOfSubscriber = subscriber.back();
+        if ((lastCharOfSubscriber == ';') && (!subscriber.empty())){
+            // Remove trailling colon and white spaces
+            subscriber.pop_back();
+            Utils::trim(subscriber);
+        }
+        subscribers.push_back(subscriber);
+        subscriber = Utils::getLine(in, ',');
+    }
+    // Store signal info
+    sig.setName(sigName);
+    sig.setSignalSize(sigSize);
+    sig.setInitValue(initValue);
+    sig.setPublisher(publisher);
+    sig.setSubscribers(subscribers);
+    return in;
 }
 
 double Signal::decodeSignal(unsigned char rawPayload[MAX_MSG_LEN], int messageSize){

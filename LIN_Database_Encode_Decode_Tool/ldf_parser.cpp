@@ -13,6 +13,30 @@
 #include "ldf_parser.hpp"
 #include "ldf_parser_dependencies/ldf_parser_helper.hpp"
 
+// Display LDF info
+std::ostream& operator<<(std::ostream& os, const LdfParser& ldfFile) {
+    if (ldfFile.isEmptyLibrary) {
+        std::cout << "Parse LDF file first before printing its info." << std::endl;
+        return os;
+    }
+    std::cout << "-----------------------------------------------" << std::endl;
+    // Print frame info
+    for (auto frame : ldfFile.framesLibrary) {
+        std::cout << frame.second << std::endl;
+    }
+    std::cout << "-----------------------------------------------" << std::endl;
+    // Print signal info
+    for (auto signal : ldfFile.signalsLibrary) {
+        std::cout << signal.second << std::endl;
+    }
+    std::cout << "-----------------------------------------------" << std::endl;
+    // Print signal encoding types info
+    for (auto sigEncodingType : ldfFile.sigEncodingTypeLibrary) {
+        std::cout << sigEncodingType.second << std::endl;
+    }
+    return os;
+}
+
 // Load file from path. Parse and store the content
 // A returned bool is used to indicate whether parsing succeeds or not
 bool LdfParser::parse(const std::string& filePath) {
@@ -31,59 +55,58 @@ bool LdfParser::parse(const std::string& filePath) {
         throw std::invalid_argument("Could not open LDF database file.");
         return false;
     }
-    // Integrity check passed, parse success
-    if (!isEmptyFramesLibrary && !isEmptySignalsLibrary && !isEmptySigEncodingTypeLibrary) {
-        isEmptyLibrary = false;
+    // Parse operation failed, remove all previously parsed info
+    if (isEmptyFramesLibrary || isEmptySignalsLibrary || isEmptySigEncodingTypeLibrary) {
+        framesLibrary = std::map<int, Frame>{};
+        signalsLibrary = std::map<std::string, Signal>{};
+        sigEncodingTypeLibrary = std::map<std::string, SignalEncodingType>{};
+        if (isEmptySignalsLibrary) {
+            std::cerr << "Cannot find signals infomation in LDF file."
+            << " Cannot parse signals representation infomation due to missing signals infomation in LDF file."
+            << " Check LDF validity and parse again." << std::endl;
+        }
+        if (isEmptyFramesLibrary) {
+            std::cerr << "Cannot parse frames infomation due to missing signals infomation in LDF file."
+            << " Cannot parse signals representation infomation due to missing signals and frames infomation in LDF file."
+            << " Check LDF validity and parse again." << std::endl;
+        }
+        if (isEmptySigEncodingTypeLibrary) {
+            std::cerr << "Cannot find signal encoding types infomation in LDF file."
+            << " Check LDF validity and parse again. " << std::endl;
+        }
+        // Reset flags
+        isEmptyFramesLibrary = true; isEmptySignalsLibrary = true; isEmptySigEncodingTypeLibrary = true;
         ldfFile.close();
-        return true;
+        return false;
     }
-    // Integrity check failed, remove all previously parsed info
-    framesLibrary = std::map<int, Frame>{};
-    signalsLibrary = std::map<std::string, Signal>{};
-    sigEncodingTypeLibrary = std::map<std::string, SignalEncodingType>{};
-    // Display corresponding error
-    if (isEmptySignalsLibrary) {
-        std::cerr << "Cannot find signals infomation in LDF file."
-        << " Cannot parse signals representation infomation due to missing signals infomation in LDF file."
-        << " Check LDF validity and parse again." << std::endl;
-    }
-    if (isEmptyFramesLibrary) {
-        std::cerr << "Cannot parse frames infomation due to missing signals infomation in LDF file."
-        << " Cannot parse signals representation infomation due to missing signals and frames infomation in LDF file."
-        << " Check LDF validity and parse again." << std::endl;
-    }
-    if (isEmptySigEncodingTypeLibrary) {
-        std::cerr << "Cannot find signal encoding types infomation in LDF file."
-        << " Check LDF validity and parse again. " << std::endl;
-    }
-    // Reset flags
-    isEmptyFramesLibrary = true; isEmptySignalsLibrary = true; isEmptySigEncodingTypeLibrary = true;
+    
+    // TODO: Integrity check: all signals should have corresponding encoding type
+    // TODO: Check all signals should have start bit
+    
+    // All operations and data integrity check passed, parse success
+    isEmptyLibrary = false;
     ldfFile.close();
-    return false;
+    return true;
+    
 }
 
 void LdfParser::loadAndParseFromFile(std::istream& in) {
-    std::string line;
-    std::string lineInitial;
+    std::string preconditionContent;
+    std::string conditionName;
     // Read the file line by line
-    while (getline(in, line)) {
-        std::stringstream lineStream(line);
-        lineInitial = Utils::getLine(lineStream, '{');
+    while (getline(in, preconditionContent, '{')) {
+        conditionName = Utils::lastTokenOf(preconditionContent);
         // Look for signal encoding types
-        if (lineInitial == "Signal_encoding_types") {
-            // Loop through each encoding type
-            std::string sigEncodingTypeName, sigEncodingTypeNameLine;
-            while(getline(in, sigEncodingTypeNameLine)) {
-                std::stringstream sigEncodingTypeNameLineStream(sigEncodingTypeNameLine);
-                sigEncodingTypeName = Utils::getLine(sigEncodingTypeNameLineStream, '{');
-                // Stop condition
-                if (sigEncodingTypeName == "}") {
-                    break;
-                }
+        if (conditionName == "Signal_encoding_types") {
+            std::string singleSigEncodingType = Utils::getLine(in, '}');
+            while (singleSigEncodingType != "") {
+                // Parse signal encoding type
+                std::stringstream singleSigEncodingTypeStream(singleSigEncodingType);
+                std::string sigEncodingTypeName = Utils::getLine(singleSigEncodingTypeStream, '{');
                 SignalEncodingType sigEncodingType;
                 sigEncodingType.setName(sigEncodingTypeName);
-                in >> sigEncodingType;
-                // Signal encoding type name uniqueness check. Names by definition need to be unqiue within the file
+                singleSigEncodingTypeStream >> sigEncodingType;
+                // Store signal encoding type
                 sigEncodingTypeLibrary_iterator data_itr = sigEncodingTypeLibrary.find(sigEncodingType.getName());
                 if (data_itr == sigEncodingTypeLibrary.end()) {
                     // Uniqueness check passed, store the signal encoding type
@@ -93,46 +116,23 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                     throw std::invalid_argument("Signal encoding type \"" + sigEncodingType.getName()
                                                 + "\" has a duplicate. Parse Failed.");
                 }
+                // Get next signal encoding type
+                singleSigEncodingType = Utils::getLine(in, '}');
             }
             isEmptySigEncodingTypeLibrary = false;
         }
-        else if (lineInitial == "Signals") {
-            std::string sigName, sigLine;
-            // Parse each signal
-            while(getline(in, sigLine)) {
-                std::stringstream sigLineStream(sigLine);
-                sigName = Utils::getLine(sigLineStream, ':');
-                // Stop condition
-                if (sigName == "}") {
-                    break;
-                }
-                // Parse signal info
-                int sigSize, initValue;
-                std::string publisher, subscriber;
-                std::vector<std::string> subscribers;
-                sigSize = std::stoi(Utils::getLine(sigLineStream, ','));
-                initValue = std::stoi(Utils::getLine(sigLineStream, ','));
-                publisher = Utils::getLine(sigLineStream, ',');
-                subscriber = Utils::getLine(sigLineStream, ',');
-                while (subscriber != "") {
-                    // Remove semi colon if there exists one
-                    char lastCharOfSubscriber = subscriber.back();
-                    if ((lastCharOfSubscriber == ';') && (!subscriber.empty())){
-                        // Remove trailling colon and white spaces
-                        subscriber.pop_back();
-                        Utils::trim(subscriber);
-                    }
-                    subscribers.push_back(subscriber);
-                    subscriber = Utils::getLine(sigLineStream, ',');
-                }
-                // Store signal info
+        else if (conditionName == "Signals") {
+            // Get all signal representations
+            std::string allSignals = Utils::getLine(in, '}');
+            std::stringstream allSignalsStream(allSignals);
+            // Loop through each signal representation
+            std::string singleSignal = Utils::getLine(allSignalsStream, ';');
+            while (singleSignal != "") {
+                // Parse signal
+                std::stringstream singleSignalStream(singleSignal);
                 Signal sig;
-                sig.setName(sigName);
-                sig.setSignalSize(sigSize);
-                sig.setInitValue(initValue);
-                sig.setPublisher(publisher);
-                sig.setSubscribers(subscribers);
-                // Signal name uniqueness check. Names by definition need to be unqiue within the file
+                singleSignalStream >> sig;
+                // Store signal
                 signalsLibrary_iterator data_itr = signalsLibrary.find(sig.getName());
                 if (data_itr == signalsLibrary.end()) {
                     // Uniqueness check passed, store the signal
@@ -141,44 +141,37 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                 else {
                     throw std::invalid_argument("Signal \"" + sig.getName() + "\" has a duplicate. Parse Failed.");
                 }
+                // Get next signal
+                singleSignal = Utils::getLine(allSignalsStream, ';');
             }
             isEmptySignalsLibrary = false;
         }
-        else if ((lineInitial == "Frames") && (!isEmptySignalsLibrary)){
-            
-            // Loop through frames
-            std::string frameName, frameNameLine;
-            while(getline(in, frameNameLine)) {
-                std::stringstream frameNameLineStream(frameNameLine);
-                frameName = Utils::getLine(frameNameLineStream, ':');
-                // Stop condition
-                if (frameName == "}") {
-                    break;
-                }
-                // Parse frame info
-                int id, messageSize;
-                std::string publisher;
-                id = std::stoi(Utils::getLine(frameNameLineStream, ','));
-                publisher = Utils::getLine(frameNameLineStream, ',');
-                messageSize = std::stoi(Utils::getLine(frameNameLineStream, '{'));
+        else if ((conditionName == "Frames") && (!isEmptySignalsLibrary)){
+            // Loop through each frame
+            std::string singleFrame = Utils::getLine(in, '}');
+            while (singleFrame != "") {
+                std::stringstream singleFrameStream(singleFrame);
+                // Get name, id, publisher and frame size
+                std::string frameName = Utils::getLine(singleFrameStream, ':');
+                int id = std::stoi(Utils::getLine(singleFrameStream, ','));
+                std::string publisher = Utils::getLine(singleFrameStream, ',');
+                int messageSize = std::stoi(Utils::getLine(singleFrameStream, '{'));
                 Frame frm;
-                frm.setId(id);
-                frm.setMessageSize(messageSize);
-                frm.setName(frameName);
-                frm.setPublisher(publisher);
-                // Parse its connected signals
-                std::string sigName, sigLine;
-                while(getline(in, sigLine)) {
-                    std::stringstream sigLineStream(sigLine);
-                    sigName = Utils::getLine(sigLineStream, ',');
-                    // Stop condition
-                    if (sigName == "}") {
-                        break;
-                    }
-                    int startBit = std::stoi(Utils::getLine(sigLineStream, ';'));
+                frm.setId(id); frm.setName(frameName);
+                frm.setPublisher(publisher); frm.setMessageSize(messageSize);
+                // Loop through its connected signals
+                std::string singleSignal = Utils::getLine(singleFrameStream, ';');
+                while (singleSignal != "") {
+                    // Get signal name and start bit
+                    std::stringstream singleSignalStream(singleSignal);
+                    std::string sigName = Utils::getLine(singleSignalStream, ',');
+                    int startBit = std::stoi(Utils::getLine(singleSignalStream, ';'));
+                    // Store signal name and start bit
                     frm.addSignalInfo(std::make_pair(sigName, startBit));
+                    // Go to next signal
+                    singleSignal = Utils::getLine(singleFrameStream, ';');
                 }
-                // Store signals start bit
+                // Assign signals start bit to signal entities
                 for (size_t i = 0; i < frm.getSignalsName().size(); i++) {
                     signalsLibrary_iterator data_itr = signalsLibrary.find(frm.getSignalsName()[i].first);
                     if (data_itr == signalsLibrary.end()) {
@@ -192,25 +185,23 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                 // Store frame info into container
                 framesLibrary_iterator data_itr = framesLibrary.find(frm.getId());
                 if (data_itr == framesLibrary.end()) {
-                    // Uniqueness check passed, store the signal
                     framesLibrary.insert(std::make_pair(frm.getId(), frm));
                 }
                 else {
                     throw std::invalid_argument("Frame \"" + frm.getName() + "\" has a duplicate. Parse Failed.");
                 }
-                
+                // Get next frame
+                singleFrame = Utils::getLine(in, '}');
             }
             isEmptyFramesLibrary = false;
         }
-        else if ((lineInitial == "Signal_representation")
+        else if ((conditionName == "Signal_representation")
                  && (!isEmptySignalsLibrary) && (!isEmptySigEncodingTypeLibrary)) {
-            
             // Get all signal representations
             std::string sigRepresentations = Utils::getLine(in, '}');
-            std::string singleSigRepresentation;
             std::stringstream sigRepresentationsStream(sigRepresentations);
             // Loop through each signal representation
-            singleSigRepresentation = Utils::getLine(sigRepresentationsStream, ';');
+            std::string singleSigRepresentation = Utils::getLine(sigRepresentationsStream, ';');
             while (singleSigRepresentation != "") {
                 std::stringstream singleSigRepresentationStream(singleSigRepresentation);
                 std::string encodingTypeName = Utils::getLine(singleSigRepresentationStream, ':');
@@ -247,34 +238,8 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                 // Get next signal representation
                 singleSigRepresentation = Utils::getLine(sigRepresentationsStream, ';');
             }
-            // TODO: Integrity check: all signals should have corresponding encoding type
-            
         }
     }
-    
-}
-
-std::ostream& operator<<(std::ostream& os, const LdfParser& ldfFile) {
-    if (ldfFile.isEmptyLibrary) {
-        std::cout << "Parse LDF file first before printing its info." << std::endl;
-        return os;
-    }
-    std::cout << "-----------------------------------------------" << std::endl;
-    // Print frame info
-    for (auto frame : ldfFile.framesLibrary) {
-        std::cout << frame.second << std::endl;
-    }
-    std::cout << "-----------------------------------------------" << std::endl;
-    // Print signal info
-    for (auto signal : ldfFile.signalsLibrary) {
-        std::cout << signal.second << std::endl;
-    }
-    std::cout << "-----------------------------------------------" << std::endl;
-    // Print signal encoding types info
-    for (auto sigEncodingType : ldfFile.sigEncodingTypeLibrary) {
-        std::cout << sigEncodingType.second << std::endl;
-    }
-    return os;
 }
 
 std::map<std::string, double> LdfParser::decode(int& msgId, unsigned char payLoad[], int& dlc){

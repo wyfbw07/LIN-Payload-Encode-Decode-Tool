@@ -14,9 +14,8 @@
 
 namespace Utils {
 
-/*  A special ver version of trim function that removes any leading and trailling white spaces
-    and also removes all occurrences of new line and tab characters
- */
+// A special ver version of trim function that removes any leading and trailling white spaces
+// and also removes all occurrences of new line and tab characters
 inline std::string& trim(std::string& str)
 {
     str.erase(str.find_last_not_of(' ') + 1);   //suffixing spaces
@@ -27,26 +26,21 @@ inline std::string& trim(std::string& str)
     return str;
 }
 
-inline std::string trimCopy(std::string& str)
-{
-    str.erase(str.find_last_not_of(' ') + 1);   //suffixing spaces
-    str.erase(0, str.find_first_not_of(' '));   //prefixing spaces
-    return str;
-}
-
-inline std::string& getWordBeforeDelimitor(std::string& word, char delimiter) {
-    std::stringstream lineStream(word);
+// A custom getline function that trims the word before returning
+inline std::string getLine(std::istream& lineStream, char delimiter) {
+    std::string word;
     getline(lineStream, word, delimiter);
-    word.erase(remove(word.begin(), word.end(), '\r'), word.end());
     trim(word);
     return word;
 }
 
-inline std::string getLine(std::istream& lineStream, char delimiter) {
-    std::string word;
-    getline(lineStream, word, delimiter);
-    trim(word); // Remove leading and/or trailling white spaces
-    return word;
+inline std::string lastTokenOf(std::string& str) {
+    std::string token;
+    // read the first token from an input string stream constructed with the string in reverse
+    std::istringstream( { str.rbegin(), str.rend() } ) >> token;
+    
+    // return the reverse of the token that was read
+    return { token.rbegin(), token.rend() } ;
 }
 
 }
