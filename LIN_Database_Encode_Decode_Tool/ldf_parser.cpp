@@ -95,14 +95,14 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
     std::string conditionName;
     // Read the file line by line
     while (getline(in, preconditionContent, '{')) {
-        conditionName = Utils::lastTokenOf(preconditionContent);
+        conditionName = utils::lastTokenOf(preconditionContent);
         // Look for signal encoding types
         if (conditionName == "Signal_encoding_types") {
-            std::string singleSigEncodingType = Utils::getLine(in, '}');
+            std::string singleSigEncodingType = utils::getline(in, '}');
             while (singleSigEncodingType != "") {
                 // Parse signal encoding type
                 std::stringstream singleSigEncodingTypeStream(singleSigEncodingType);
-                std::string sigEncodingTypeName = Utils::getLine(singleSigEncodingTypeStream, '{');
+                std::string sigEncodingTypeName = utils::getline(singleSigEncodingTypeStream, '{');
                 SignalEncodingType sigEncodingType;
                 sigEncodingType.setName(sigEncodingTypeName);
                 singleSigEncodingTypeStream >> sigEncodingType;
@@ -117,16 +117,16 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                                                 + "\" has a duplicate. Parse Failed.");
                 }
                 // Get next signal encoding type
-                singleSigEncodingType = Utils::getLine(in, '}');
+                singleSigEncodingType = utils::getline(in, '}');
             }
             isEmptySigEncodingTypeLibrary = false;
         }
         else if (conditionName == "Signals") {
             // Get all signal representations
-            std::string allSignals = Utils::getLine(in, '}');
+            std::string allSignals = utils::getline(in, '}');
             std::stringstream allSignalsStream(allSignals);
             // Loop through each signal representation
-            std::string singleSignal = Utils::getLine(allSignalsStream, ';');
+            std::string singleSignal = utils::getline(allSignalsStream, ';');
             while (singleSignal != "") {
                 // Parse signal
                 std::stringstream singleSignalStream(singleSignal);
@@ -142,34 +142,34 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                     throw std::invalid_argument("Signal \"" + sig.getName() + "\" has a duplicate. Parse Failed.");
                 }
                 // Get next signal
-                singleSignal = Utils::getLine(allSignalsStream, ';');
+                singleSignal = utils::getline(allSignalsStream, ';');
             }
             isEmptySignalsLibrary = false;
         }
         else if ((conditionName == "Frames") && (!isEmptySignalsLibrary)){
             // Loop through each frame
-            std::string singleFrame = Utils::getLine(in, '}');
+            std::string singleFrame = utils::getline(in, '}');
             while (singleFrame != "") {
                 std::stringstream singleFrameStream(singleFrame);
                 // Get name, id, publisher and frame size
-                std::string frameName = Utils::getLine(singleFrameStream, ':');
-                int id = std::stoi(Utils::getLine(singleFrameStream, ','));
-                std::string publisher = Utils::getLine(singleFrameStream, ',');
-                int messageSize = std::stoi(Utils::getLine(singleFrameStream, '{'));
+                std::string frameName = utils::getline(singleFrameStream, ':');
+                int id = utils::stoi(utils::getline(singleFrameStream, ','));
+                std::string publisher = utils::getline(singleFrameStream, ',');
+                int messageSize = utils::stoi(utils::getline(singleFrameStream, '{'));
                 Frame frm;
                 frm.setId(id); frm.setName(frameName);
                 frm.setPublisher(publisher); frm.setMessageSize(messageSize);
                 // Loop through its connected signals
-                std::string singleSignal = Utils::getLine(singleFrameStream, ';');
+                std::string singleSignal = utils::getline(singleFrameStream, ';');
                 while (singleSignal != "") {
                     // Get signal name and start bit
                     std::stringstream singleSignalStream(singleSignal);
-                    std::string sigName = Utils::getLine(singleSignalStream, ',');
-                    int startBit = std::stoi(Utils::getLine(singleSignalStream, ';'));
+                    std::string sigName = utils::getline(singleSignalStream, ',');
+                    int startBit = utils::stoi(utils::getline(singleSignalStream, ';'));
                     // Store signal name and start bit
                     frm.addSignalInfo(std::make_pair(sigName, startBit));
                     // Go to next signal
-                    singleSignal = Utils::getLine(singleFrameStream, ';');
+                    singleSignal = utils::getline(singleFrameStream, ';');
                 }
                 // Assign signals start bit to signal entities
                 for (size_t i = 0; i < frm.getSignalsName().size(); i++) {
@@ -191,29 +191,29 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                     throw std::invalid_argument("Frame \"" + frm.getName() + "\" has a duplicate. Parse Failed.");
                 }
                 // Get next frame
-                singleFrame = Utils::getLine(in, '}');
+                singleFrame = utils::getline(in, '}');
             }
             isEmptyFramesLibrary = false;
         }
         else if ((conditionName == "Signal_representation")
                  && (!isEmptySignalsLibrary) && (!isEmptySigEncodingTypeLibrary)) {
             // Get all signal representations
-            std::string sigRepresentations = Utils::getLine(in, '}');
+            std::string sigRepresentations = utils::getline(in, '}');
             std::stringstream sigRepresentationsStream(sigRepresentations);
             // Loop through each signal representation
-            std::string singleSigRepresentation = Utils::getLine(sigRepresentationsStream, ';');
+            std::string singleSigRepresentation = utils::getline(sigRepresentationsStream, ';');
             while (singleSigRepresentation != "") {
                 std::stringstream singleSigRepresentationStream(singleSigRepresentation);
-                std::string encodingTypeName = Utils::getLine(singleSigRepresentationStream, ':');
+                std::string encodingTypeName = utils::getline(singleSigRepresentationStream, ':');
                 // Loop through each subscriber
-                std::string subscriber = Utils::getLine(singleSigRepresentationStream, ',');
+                std::string subscriber = utils::getline(singleSigRepresentationStream, ',');
                 while (subscriber != "") {
                     // Get subscriber name. Remove semi colon if there exists one
                     char lastCharOfSubscriber = subscriber.back();
                     if ((lastCharOfSubscriber == ';') && (!subscriber.empty())){
                         // Remove trailling colon and white spaces
                         subscriber.pop_back();
-                        Utils::trim(subscriber);
+                        utils::trim(subscriber);
                     }
                     // Find the corresponding signal encoding type in sigEncodingTypeLibrary
                     sigEncodingTypeLibrary_iterator data_itr_encode_type = sigEncodingTypeLibrary.find(encodingTypeName);
@@ -233,10 +233,10 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                         data_itr->second.setEncodingType(encodingType_ptr);
                     }
                     // Get next subscriber
-                    subscriber = Utils::getLine(singleSigRepresentationStream, ',');
+                    subscriber = utils::getline(singleSigRepresentationStream, ',');
                 }
                 // Get next signal representation
-                singleSigRepresentation = Utils::getLine(sigRepresentationsStream, ';');
+                singleSigRepresentation = utils::getline(sigRepresentationsStream, ';');
             }
         }
     }

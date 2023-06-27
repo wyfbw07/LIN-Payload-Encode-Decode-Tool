@@ -33,11 +33,11 @@ std::ostream& operator<<(std::ostream& os, const Signal& sig){
 
 std::istream& operator>>(std::istream& in, Signal& sig) {
     // Parse signal info
-    std::string sigName = Utils::getLine(in, ':');
-    int sigSize = std::stoi (Utils::getLine(in, ','));
-    int initValue = std::stoi (Utils::getLine(in, ','));
-    std::string publisher = Utils::getLine(in, ',');
-    std::string subscriber = Utils::getLine(in, ',');
+    std::string sigName = utils::getline(in, ':');
+    int sigSize = utils::stoi (utils::getline(in, ','));
+    int initValue = utils::stoi(utils::getline(in, ','));
+    std::string publisher = utils::getline(in, ',');
+    std::string subscriber = utils::getline(in, ',');
     std::vector<std::string> subscribers;
     while (subscriber != "") {
         // Remove semi colon if there exists one
@@ -45,10 +45,10 @@ std::istream& operator>>(std::istream& in, Signal& sig) {
         if ((lastCharOfSubscriber == ';') && (!subscriber.empty())){
             // Remove trailling colon and white spaces
             subscriber.pop_back();
-            Utils::trim(subscriber);
+            utils::trim(subscriber);
         }
         subscribers.push_back(subscriber);
-        subscriber = Utils::getLine(in, ',');
+        subscriber = utils::getline(in, ',');
     }
     // Store signal info
     sig.setName(sigName);

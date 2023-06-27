@@ -104,10 +104,10 @@ Reference PDF for LIN bus [LIN Specification Package Revision 2.2A](https://cdn.
 ## What's New
 
 - This tool now supports decoding of LDF frames.
+- Completely new LDF parser so that it can parse normally even if the file content structure is not exactly identical.
 
-  
+
 
 ## To Dos
 
 - Encoding of LIN frame payloads.
-- Complete reconstructing LDF parser so that it can parse normally even if the file content structure is not exactly identical.

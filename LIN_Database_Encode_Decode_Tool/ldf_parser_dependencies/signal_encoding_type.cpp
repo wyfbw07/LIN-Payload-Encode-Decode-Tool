@@ -38,16 +38,16 @@ std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncoding
 }
 
 std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) {
-    std::string singleValueType = Utils::getLine(in, ';');
+    std::string singleValueType = utils::getline(in, ';');
     while (singleValueType != "") {
         std::stringstream singleValueTypeStream(singleValueType);
-        std::string valueTypeName = Utils::getLine(singleValueTypeStream, ',');
+        std::string valueTypeName = utils::getline(singleValueTypeStream, ',');
         if (valueTypeName == "physical_value") {
-            int min = std::stoi(Utils::getLine(singleValueTypeStream, ','));
-            int max = std::stoi(Utils::getLine(singleValueTypeStream, ','));
-            int factor = std::stoi(Utils::getLine(singleValueTypeStream, ','));
-            int offset = std::stoi(Utils::getLine(singleValueTypeStream, ','));
-            std::string unit = Utils::getLine(singleValueTypeStream, ';');
+            int min = utils::stoi(utils::getline(singleValueTypeStream, ','));
+            int max = utils::stoi(utils::getline(singleValueTypeStream, ','));
+            int factor = utils::stoi(utils::getline(singleValueTypeStream, ','));
+            int offset = utils::stoi(utils::getline(singleValueTypeStream, ','));
+            std::string unit = utils::getline(singleValueTypeStream, ';');
             // Remove quotation marks if unit exists
             if (unit != "") {
                 std::stringstream unitStream(unit);
@@ -58,8 +58,8 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
             sigEncodingType.physicalValues.push_back(std::make_pair(tmpArray, unit));
         }
         else if (valueTypeName == "logical_value") {
-            int value = std::stoi(Utils::getLine(singleValueTypeStream, ','));
-            std::string valueDescription = Utils::getLine(singleValueTypeStream, ';');
+            int value = utils::stoi(utils::getline(singleValueTypeStream, ','));
+            std::string valueDescription = utils::getline(singleValueTypeStream, ';');
             // Remove quotation marks
             if (valueDescription != "") {
                 std::stringstream unitStream(valueDescription);
@@ -68,7 +68,7 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
             sigEncodingType.logicalValues.push_back(std::make_pair(value, valueDescription));
         }
         // Get next value type
-        singleValueType = Utils::getLine(in, '}');
+        singleValueType = utils::getline(in, '}');
     }
     return in;
 }

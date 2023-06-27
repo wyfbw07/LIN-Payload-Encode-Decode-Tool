@@ -11,12 +11,12 @@
 
 int main()
 {
-    int operationChoice = 1;
+    int operationChoice = 0;
     // Create a class to store DBC info
     LdfParser ldfFile;
     try {
-        // ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/exampleLIN.ldf");
-        ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/ldf_test.ldf");
+         ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/exampleLIN.ldf");
+//        ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/ldf_test.ldf");
         std::cout << ldfFile;
         // MARK: - Function call choices
         switch (operationChoice) {
