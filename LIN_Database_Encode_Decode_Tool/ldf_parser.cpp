@@ -187,21 +187,18 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                     std::stringstream singleSignalStream(singleSignal);
                     std::string sigName = utils::getline(singleSignalStream, ',');
                     int startBit = utils::stoi(utils::getline(singleSignalStream, ';'));
-                    // Store signal name and start bit
-                    frm.addSignalInfo(std::make_pair(sigName, startBit));
-                    // Go to next signal
-                    singleSignal = utils::getline(singleFrameStream, ';');
-                }
-                // Assign signals start bit to signal entities
-                for (size_t i = 0; i < frm.getSignalsName().size(); i++) {
-                    signalsLibrary_iterator data_itr = signalsLibrary.find(frm.getSignalsName()[i].first);
+                    // Store start bit and connect the signal with current frame
+                    signalsLibrary_iterator data_itr = signalsLibrary.find(sigName);
                     if (data_itr == signalsLibrary.end()) {
-                        throw std::invalid_argument("Cannot find signal \"" + frm.getSignalsName()[i].first
+                        throw std::invalid_argument("Cannot find signal \"" + sigName
                                                     + "\" under frame \"" + frm.getName() + "\". Parse Failed.");
                     }
                     else {
-                        data_itr->second.setStartBit(frm.getSignalsName()[i].second);
+                        data_itr->second.setStartBit(startBit);
+                        frm.addSignalInfo(&(data_itr->second));
                     }
+                    // Go to next signal
+                    singleSignal = utils::getline(singleFrameStream, ';');
                 }
                 // Store frame info into container
                 framesLibrary_iterator data_itr = framesLibrary.find(frm.getId());
@@ -263,14 +260,14 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
     }
 }
 
-std::map<std::string, double> LdfParser::decode(int& msgId, unsigned char payLoad[], int& dlc){
+std::map<std::string, double> LdfParser::decode(int& frameId, unsigned char payLoad[MAX_MSG_LEN], int& dlc){
     std::map<std::string, double> decodedValues, emptyResult;
     // Check if parser has info
     if (isEmptyLibrary) {
         std::cout << "Parse LDF file first before decoding frames." << std::endl;
         return emptyResult;
     }
-    framesLibrary_iterator data_itr_frm = framesLibrary.find(msgId);
+    framesLibrary_iterator data_itr_frm = framesLibrary.find(frameId);
     // Find the frame that needs to be decoded
     if (data_itr_frm == framesLibrary.end()) {
         std::cerr << "No matching frame found. Decode failed. An empty result is returned." << std::endl;
@@ -281,19 +278,69 @@ std::map<std::string, double> LdfParser::decode(int& msgId, unsigned char payLoa
             std::cerr << "The data length of the input payload does not match with LDF info. Decode failed. An empty result is returned." << std::endl;
             return emptyResult;
         }
-        std::vector<std::pair<std::string, int> > signalsName = framesLibrary[msgId].getSignalsName();
+        std::vector<Signal*> signalsName = framesLibrary[frameId].getConnectedSignals();
         // Decode each signal under the frame
         for (size_t i = 0; i < signalsName.size(); i++) {
-            signalsLibrary_iterator data_itr_sig = signalsLibrary.find(signalsName[i].first);
-            if (data_itr_sig == signalsLibrary.end()) {
-                std::cerr << "No matching signal found. Decode failed. An empty result is returned." << std::endl;
-                return emptyResult;
-            }
-            else { // Decode signal
-                double decodedSignalValue = data_itr_sig->second.decodeSignal(payLoad, data_itr_frm->second.getDlc());
-                decodedValues.insert(std::make_pair(data_itr_sig->first, decodedSignalValue));
-            }
+            double decodedSignalValue = signalsName[i]->decodeSignal(payLoad, data_itr_frm->second.getDlc());
+            decodedValues.insert(std::make_pair(signalsName[i]->getName(), decodedSignalValue));
         }
     }
     return decodedValues;
+}
+
+int LdfParser::encode(int& frameId,
+                      std::vector<std::pair<std::string, double> > signalsToEncode,
+                      unsigned char encodedPayload[MAX_MSG_LEN]){
+    // Check if parser has info
+    if (isEmptyLibrary) {
+        std::cout << "Parse LDF file first before encoding frames." << std::endl;
+        return -1;
+    }
+    
+    
+    framesLibrary_iterator data_itr_frm = framesLibrary.find(frameId);
+    if (data_itr_frm == framesLibrary.end()) {
+        std::cout << "No matching frame found. Encode failed. An empty result is returned.\n" << std::endl;
+        return -1;
+    }
+    else {
+        int dlc = data_itr_frm->second.getDlc();
+        std::vector<Signal*> signalsName = framesLibrary[frameId].getConnectedSignals();
+        // Check input
+        bool validInput = false;
+        for (size_t i = 0; i < signalsToEncode.size(); i++) {
+            for (size_t j = 0; j < signalsName.size(); j++) {
+                if (signalsName[j]->getName() == signalsToEncode[i].first) {
+                    
+                    validInput = true;
+                }
+            }
+            if (!validInput) {
+                throw std::invalid_argument("Cannot find signal: " + signalsToEncode[i].first
+                                            + " in LIN database. Encode failed.");
+            }
+        }
+        // Encode
+        int physicalValue = 0; uint64_t encodedValue = 0; encodedValue = ~encodedValue;
+        for (size_t i = 0; i < signalsName.size(); i++) {
+            bool hasPhysicalValue = false;
+            for (size_t j = 0; j < signalsToEncode.size(); j++) {
+                if (signalsName[i]->getName() == signalsToEncode[j].first) {
+                    physicalValue = signalsToEncode[j].second;
+                    hasPhysicalValue = true;
+                }
+            }
+            // If no physical value is provided upon encoding, use the intial value
+            if (!hasPhysicalValue) {
+                physicalValue = signalsName[i]->getInitValue();
+            }
+            uint64_t singleEncodedValue = signalsName[i]->encodeSignal(physicalValue);
+            encodedValue &= singleEncodedValue;
+        }
+        for (short i = 8 - 1; i >= 0; i--) {
+            encodedPayload[i] = encodedValue % 256; // get the last byte
+            encodedValue /= 256; // get the remainder
+        }
+        return dlc;
+    }
 }

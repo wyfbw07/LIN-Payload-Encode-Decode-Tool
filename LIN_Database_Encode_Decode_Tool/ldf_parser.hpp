@@ -22,7 +22,11 @@ public:
     // A bool is used to indicate whether parsing succeeds or not
     bool parse(const std::string& filePath);
     // Decode
-    std::map<std::string, double> decode(int& msgId, unsigned char payLoad[], int& dlc);
+    std::map<std::string, double> decode(int& frameId, unsigned char payLoad[MAX_MSG_LEN], int& dlc);
+    // Encode
+    int encode(int& frameId,
+               std::vector<std::pair<std::string, double> > signalsToEncode,
+               unsigned char encodedPayload[MAX_MSG_LEN]);
     // Print LDF info
     friend std::ostream& operator<<(std::ostream& os, const LdfParser& ldfFile);
 
@@ -44,7 +48,6 @@ private:
     // Function used to parse LDF file
     void resetParsedContent();
     void loadAndParseFromFile(std::istream& in);
-    Signal& findSignalInSignalsLibrary(std::string& sigName);
 
 };
 

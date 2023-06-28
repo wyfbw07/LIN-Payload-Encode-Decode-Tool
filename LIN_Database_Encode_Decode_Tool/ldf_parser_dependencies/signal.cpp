@@ -12,6 +12,57 @@
 #include "signal.hpp"
 #include "ldf_parser_helper.hpp"
 
+// Cross platform definition of byteswap
+#ifdef _MSC_VER
+
+#define bswap_32(x) _byteswap_ulong(x)
+#define bswap_64(x) _byteswap_uint64(x)
+
+#elif defined(__GNUC__)
+
+#define bswap_32(x) __builtin_bswap32(x)
+#define bswap_64(x) __builtin_bswap64(x)
+
+#elif defined(__APPLE__)
+
+// Mac OS X / Darwin features
+#include <libkern/OSByteOrder.h>
+#define bswap_32(x) OSSwapInt32(x)
+#define bswap_64(x) OSSwapInt64(x)
+
+#elif defined(__sun) || defined(sun)
+
+#include <sys/byteorder.h>
+#define bswap_32(x) BSWAP_32(x)
+#define bswap_64(x) BSWAP_64(x)
+
+#elif defined(__FreeBSD__)
+
+#include <sys/endian.h>
+#define bswap_32(x) bswap32(x)
+#define bswap_64(x) bswap64(x)
+
+#elif defined(__OpenBSD__)
+
+#include <sys/types.h>
+#define bswap_32(x) swap32(x)
+#define bswap_64(x) swap64(x)
+
+#elif defined(__NetBSD__)
+
+#include <sys/types.h>
+#include <machine/bswap.h>
+#if defined(__BSWAP_RENAME) && !defined(__bswap_32)
+#define bswap_32(x) bswap32(x)
+#define bswap_64(x) bswap64(x)
+#endif
+
+#else
+
+#include <byteswap.h>
+
+#endif
+
 std::ostream& operator<<(std::ostream& os, const Signal& sig){
     std::cout << "[Signal] " << sig.name << ": " << std::endl;
     std::cout << "\t" << std::left << std::setw(20) << "size: " << sig.signalSize << std::endl;
@@ -74,7 +125,6 @@ double Signal::decodeSignal(unsigned char rawPayload[MAX_MSG_LEN], int messageSi
     // Access the corresponding byte and make sure we are reading a bit that is 1
     for (unsigned short bitpos = 0; bitpos < signalSize; bitpos++) {
         if (data[currentBit / CHAR_BIT] & (1 << (currentBit % CHAR_BIT))) {
-            // Add dominant bit
             decodedValue |= (1ULL << bitpos);
         }
         currentBit++;
@@ -84,4 +134,36 @@ double Signal::decodeSignal(unsigned char rawPayload[MAX_MSG_LEN], int messageSi
     factor = encodingType->getFactor(decodedValue);
     offset = encodingType->getOffset(decodedValue);
     return (double)decodedValue * factor + offset;
+}
+
+uint64_t Signal::encodeSignal(double physicalValue){
+    // Reverse linear conversion rule
+    // to convert the signals physical value into the signal's raw value
+    unsigned int currentBit = 0;
+    uint64_t encodedValue = 0; encodedValue = ~encodedValue;
+    int offset = encodingType->getOffset(physicalValue);
+    int factor = encodingType->getFactor(physicalValue);
+    unsigned int rawValue = (physicalValue - offset) / factor;
+    uint8_t* rawPayload = (uint8_t*)&rawValue;
+    // Encode
+    for (unsigned short bitpos = 0; bitpos < signalSize; bitpos++) {
+        // Access the corresponding byte and make sure we are reading a dominant bit 0
+        if (!(rawPayload[currentBit / CHAR_BIT] & (1 << (currentBit % CHAR_BIT)))) {
+            // Add dominant bit
+            encodedValue &= ~(1ULL << (bitpos + startBit));
+        }
+        currentBit++;
+    }
+    // Change endianness
+    unsigned char encodedPayload[MAX_MSG_LEN];
+    for (short i = 8 - 1; i >= 0; i--) {
+        encodedPayload[i] = encodedValue % 256; // get the last byte
+        encodedValue /= 256; // get the remainder
+    }
+    encodedValue = 0;
+    for(int i = MAX_MSG_LEN; i > 0; i--) {
+        encodedValue <<= 8;
+        encodedValue |= (uint64_t)encodedPayload[i-1];
+    }
+    return encodedValue;
 }

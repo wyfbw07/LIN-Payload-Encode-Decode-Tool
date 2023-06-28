@@ -18,10 +18,10 @@ public:
     
     // Getters
     std::string getName() const { return name; }
-    int getMinValue(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[0]; }
-    int getMaxValue(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[1]; }
-    int getFactor(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[2]; }
-    int getOffset(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[3]; }
+    int getMinValue(int64_t rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[0]; }
+    int getMaxValue(int64_t rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[1]; }
+    int getFactor(int64_t rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[2]; }
+    int getOffset(int64_t rawValue) const { return getPhysicalValuesForRawValue(rawValue).first[3]; }
     std::string getUnit(int64_t& rawValue) const { return getPhysicalValuesForRawValue(rawValue).second; }
     // Setter
     void setName(const std::string& name) { this->name = name; }

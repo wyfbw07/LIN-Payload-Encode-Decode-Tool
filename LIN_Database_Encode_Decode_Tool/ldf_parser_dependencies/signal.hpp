@@ -23,6 +23,7 @@ public:
     // Getters
     std::string getName() const { return name; }
     int getstartBit() const { return startBit; }
+    int getInitValue() const { return initValue; }
     int getSignalSize() const { return signalSize; }
     SignalEncodingType* getEncodingType() { return encodingType; }
     // Setters
@@ -34,6 +35,7 @@ public:
     void setEncodingType(SignalEncodingType* encodingType) {this->encodingType = encodingType; }
     void setSubscribers(const std::vector<std::string>& subscribers) { this->subscribers = subscribers; }
     double decodeSignal(unsigned char rawPayload[MAX_MSG_LEN], int messageSize);
+    uint64_t encodeSignal(double physicalValue);
     // Operator overload, allows parsing of signals info
     friend std::istream& operator>>(std::istream& in, Signal& sig);
     friend std::ostream& operator<<(std::ostream& os, const Signal& sig);
