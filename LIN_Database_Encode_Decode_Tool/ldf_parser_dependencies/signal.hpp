@@ -22,8 +22,9 @@ public:
 
     // Getters
     std::string getName() const { return name; }
-    unsigned int getInitValue() const { return initValue; }
-    unsigned int getSignalSize() const { return signalSize; }
+    int getstartBit() const { return startBit; }
+    int getSignalSize() const { return signalSize; }
+    SignalEncodingType* getEncodingType() { return encodingType; }
     // Setters
     void setName(const std::string& name) { this->name = name; }
     void setStartBit(const int& startBit) { this->startBit = startBit; }

@@ -37,6 +37,18 @@ std::ostream& operator<<(std::ostream& os, const LdfParser& ldfFile) {
     return os;
 }
 
+void LdfParser::resetParsedContent(){
+    // Reset Libraries
+    framesLibrary = std::map<int, Frame>{};
+    signalsLibrary = std::map<std::string, Signal>{};
+    sigEncodingTypeLibrary = std::map<std::string, SignalEncodingType>{};
+    // Reset flags
+    isEmptyLibrary = true;
+    isEmptyFramesLibrary = true;
+    isEmptySignalsLibrary = true;
+    isEmptySigEncodingTypeLibrary = true;
+}
+
 // Load file from path. Parse and store the content
 // A returned bool is used to indicate whether parsing succeeds or not
 bool LdfParser::parse(const std::string& filePath) {
@@ -47,41 +59,50 @@ bool LdfParser::parse(const std::string& filePath) {
     // Get file path, open the file stream
     std::ifstream ldfFile(filePath.c_str(), std::ios::binary);
     if (ldfFile) {
-        // Parse file content
-        loadAndParseFromFile(ldfFile);
+        loadAndParseFromFile(ldfFile);  // Parse file content
     }
-    // File open failed
     else {
         throw std::invalid_argument("Could not open LDF database file.");
         return false;
     }
-    // Parse operation failed, remove all previously parsed info
+    // Parse operation failed
     if (isEmptyFramesLibrary || isEmptySignalsLibrary || isEmptySigEncodingTypeLibrary) {
-        framesLibrary = std::map<int, Frame>{};
-        signalsLibrary = std::map<std::string, Signal>{};
-        sigEncodingTypeLibrary = std::map<std::string, SignalEncodingType>{};
         if (isEmptySignalsLibrary) {
-            std::cerr << "Cannot find signals infomation in LDF file."
-            << " Cannot parse signals representation infomation due to missing signals infomation in LDF file."
+            std::cerr << "Cannot find signals infomation in LDF file." << std::endl;
+            std::cerr << "Cannot parse signals representation infomation due to missing signals infomation in LDF file."
             << " Check LDF validity and parse again." << std::endl;
         }
         if (isEmptyFramesLibrary) {
-            std::cerr << "Cannot parse frames infomation due to missing signals infomation in LDF file."
-            << " Cannot parse signals representation infomation due to missing signals and frames infomation in LDF file."
+            std::cerr << "Cannot parse frames infomation due to missing signals infomation in LDF file."  << std::endl;
+            std::cerr << "Cannot parse signals representation infomation due to missing signals and frames infomation in LDF file."
             << " Check LDF validity and parse again." << std::endl;
         }
         if (isEmptySigEncodingTypeLibrary) {
             std::cerr << "Cannot find signal encoding types infomation in LDF file."
             << " Check LDF validity and parse again. " << std::endl;
         }
-        // Reset flags
-        isEmptyFramesLibrary = true; isEmptySignalsLibrary = true; isEmptySigEncodingTypeLibrary = true;
+        resetParsedContent();
         ldfFile.close();
         return false;
     }
     
-    // TODO: Integrity check: all signals should have corresponding encoding type
-    // TODO: Check all signals should have start bit
+    // Data Integrity check: all signals should have corresponding encoding type and start bit
+    for (auto signal : signalsLibrary) {
+        if (signal.second.getEncodingType() == NULL) {
+            std::cerr << "Signal \"" << signal.second.getName()
+            << "\" does not have a corresponding encoding type. Parse Failed." << std::endl;
+            resetParsedContent();
+            ldfFile.close();
+            return false;
+        }
+//        if (signal.second.getstartBit() == -1) {
+//            std::cerr << "Signal \"" << signal.second.getName() << "\" does not have a start bit. "
+//            << "This also means that the signal is not attached to any frame. Parse Failed." << std::endl;
+//            resetParsedContent();
+//            ldfFile.close();
+//            return false;
+//        }
+    }
     
     // All operations and data integrity check passed, parse success
     isEmptyLibrary = false;

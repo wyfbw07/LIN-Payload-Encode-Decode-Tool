@@ -42,6 +42,7 @@ private:
     // A hash table that stores all info of signal encoding types. <encoding type name, Signal Encoding type object>
     std::map<std::string, SignalEncodingType> sigEncodingTypeLibrary{};
     // Function used to parse LDF file
+    void resetParsedContent();
     void loadAndParseFromFile(std::istream& in);
     Signal& findSignalInSignalsLibrary(std::string& sigName);
 

@@ -15,6 +15,7 @@
 std::ostream& operator<<(std::ostream& os, const Signal& sig){
     std::cout << "[Signal] " << sig.name << ": " << std::endl;
     std::cout << "\t" << std::left << std::setw(20) << "size: " << sig.signalSize << std::endl;
+    std::cout << "\t" << std::left << std::setw(20) << "start bit: " << sig.startBit << std::endl;
     std::cout << "\t" << std::left << std::setw(20) << "initial value: " << sig.initValue << std::endl;
     std::cout << "\t" << std::left << std::setw(20) << "Encode type: " << sig.encodingType->getName() << std::endl;
     std::cout << "\t" << std::left << std::setw(20) << "publisher: " << sig.publisher << std::endl;
@@ -26,7 +27,7 @@ std::ostream& operator<<(std::ostream& os, const Signal& sig){
         std::cout << std::endl;
     }
     else{
-        std::cout << "\tNo subscribers";
+        std::cout << "\tNo subscribers" << std::endl;
     }
     return os;
 }

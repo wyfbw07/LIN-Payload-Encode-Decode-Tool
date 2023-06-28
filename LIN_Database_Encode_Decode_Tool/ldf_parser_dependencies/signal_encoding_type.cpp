@@ -38,6 +38,7 @@ std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncoding
 }
 
 std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) {
+    // Loop through each value type
     std::string singleValueType = utils::getline(in, ';');
     while (singleValueType != "") {
         std::stringstream singleValueTypeStream(singleValueType);

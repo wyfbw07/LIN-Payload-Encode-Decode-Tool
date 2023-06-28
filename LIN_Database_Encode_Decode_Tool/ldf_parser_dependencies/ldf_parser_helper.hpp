@@ -34,14 +34,21 @@ inline std::string getline(std::istream& lineStream, char delimiter) {
     return word;
 }
 
-// Gives the last word in a string
+// Gives the condition name in a string
 inline std::string lastTokenOf(std::string& str) {
-    std::string token;
-    // read the first token from an input string stream constructed with the string in reverse
-    std::istringstream( { str.rbegin(), str.rend() } ) >> token;
-    
-    // return the reverse of the token that was read
-    return { token.rbegin(), token.rend() } ;
+    // Read the first token from an input string stream constructed with the string in reverse
+    // And read until the first white space
+    std::string reversedToken, conditionName;
+    std::istringstream( { str.rbegin(), str.rend() } ) >> reversedToken;
+    // Read until either delimeters
+    for (size_t i = 0; i < reversedToken.size(); i++) {
+        if (reversedToken[i] == ';' || reversedToken[i] == '}') {
+            break;
+        }
+        conditionName += reversedToken[i];
+    }
+    // Reverse back the token
+    return { conditionName.rbegin(), conditionName.rend() };
 }
 
 // A custom stoi function that detects the input number base
