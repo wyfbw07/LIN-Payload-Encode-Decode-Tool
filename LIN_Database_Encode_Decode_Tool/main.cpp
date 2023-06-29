@@ -15,8 +15,8 @@ int main()
     // Create a class to store LDF info
     LdfParser ldfFile;
     try {
-        ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/Seatdb.ldf");
-        //        ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/exampleLIN_medium.ldf");
+        ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/exampleLIN_small.ldf");
+//        ldfFile.parse("/Users/wyfbw07/Downloads/Test_Database_Files/exampleLIN_medium.ldf");
         std::cout << ldfFile;
         // MARK: - Function call choices
         switch (operationChoice) {

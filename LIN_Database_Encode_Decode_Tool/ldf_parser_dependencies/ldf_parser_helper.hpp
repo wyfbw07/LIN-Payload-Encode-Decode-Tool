@@ -14,7 +14,7 @@
 
 namespace utils {
 
-// A special ver version of trim function that removes any leading and trailling white spaces
+// A special version of trim function that removes any leading and trailling white spaces
 // and also removes all occurrences of new line and tab characters
 inline std::string& trim(std::string& str)
 {
@@ -53,10 +53,8 @@ inline std::string lastTokenOf(std::string& str) {
 
 // A custom stoi function that detects the input number base
 inline int stoi(std::string number) {
-    if (number[0] == '0' && number.size() > 1)
-    {
-        if (number[1] == 'x')
-        {
+    if (number[0] == '0' && number.size() > 1) {
+        if (number[1] == 'x') {
             // Input is HEX
             return std::stoi(number, 0, 16);
         }

@@ -16,8 +16,9 @@ std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncoding
     std::cout << "[Signal Encoding Type] " << sigEncodingType.name << ": " << std::endl;
     if (sigEncodingType.logicalValues.size() != 0) {
         for (size_t i = 0; i < sigEncodingType.logicalValues.size(); i++) {
-            std::cout << "\t[Logical value] \"" << sigEncodingType.logicalValues[i].first
-            << "\" means \"" << sigEncodingType.logicalValues[i].second << "\"" << std::endl;
+            std::cout << "\t[Logical value] \""
+            << sigEncodingType.logicalValues[i].first << "\" means \""
+            << sigEncodingType.logicalValues[i].second << "\"" << std::endl;
         }
     }
     if (sigEncodingType.physicalValues.size() != 0) {

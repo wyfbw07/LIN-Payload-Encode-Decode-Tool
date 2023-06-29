@@ -21,12 +21,11 @@ public:
     // Construct using either a File or a Stream of a LDF-File
     // A bool is used to indicate whether parsing succeeds or not
     bool parse(const std::string& filePath);
-    // Decode
-    std::map<std::string, double> decode(int& frameId, unsigned char payLoad[MAX_MSG_LEN], int& dlc);
-    // Encode
+    // Decode/Encode
+    std::map<std::string, double> decode(int& frameId, unsigned char payLoad[MAX_FRAME_LEN], int& dlc);
     int encode(int& frameId,
                std::vector<std::pair<std::string, double> > signalsToEncode,
-               unsigned char encodedPayload[MAX_MSG_LEN]);
+               unsigned char encodedPayload[MAX_FRAME_LEN]);
     // Print LDF info
     friend std::ostream& operator<<(std::ostream& os, const LdfParser& ldfFile);
 

@@ -13,8 +13,7 @@
 #include <vector>
 #include "signal_encoding_type.hpp"
 
-constexpr int MAX_MSG_LEN = 8;
-constexpr int MAX_BIT_INDEX_uint64_t = (sizeof(uint64_t) * CHAR_BIT) - 1;
+constexpr int MAX_FRAME_LEN = 8;
 
 class Signal {
 
@@ -34,7 +33,8 @@ public:
     void setPublisher(const std::string& publisher) { this->publisher = publisher; }
     void setEncodingType(SignalEncodingType* encodingType) {this->encodingType = encodingType; }
     void setSubscribers(const std::vector<std::string>& subscribers) { this->subscribers = subscribers; }
-    double decodeSignal(unsigned char rawPayload[MAX_MSG_LEN], int messageSize);
+    // Decode/Encode
+    double decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN], int messageSize);
     uint64_t encodeSignal(double physicalValue);
     // Operator overload, allows parsing of signals info
     friend std::istream& operator>>(std::istream& in, Signal& sig);
@@ -42,8 +42,7 @@ public:
 
 private:
 
-    // Initialize with invalid values
-    int startBit = -1;
+    int startBit = -1; // Initialize with invalid value
     int initValue{};
     int signalSize{};
     std::string name{};

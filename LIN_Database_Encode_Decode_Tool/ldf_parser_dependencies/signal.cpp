@@ -12,57 +12,6 @@
 #include "signal.hpp"
 #include "ldf_parser_helper.hpp"
 
-// Cross platform definition of byteswap
-#ifdef _MSC_VER
-
-#define bswap_32(x) _byteswap_ulong(x)
-#define bswap_64(x) _byteswap_uint64(x)
-
-#elif defined(__GNUC__)
-
-#define bswap_32(x) __builtin_bswap32(x)
-#define bswap_64(x) __builtin_bswap64(x)
-
-#elif defined(__APPLE__)
-
-// Mac OS X / Darwin features
-#include <libkern/OSByteOrder.h>
-#define bswap_32(x) OSSwapInt32(x)
-#define bswap_64(x) OSSwapInt64(x)
-
-#elif defined(__sun) || defined(sun)
-
-#include <sys/byteorder.h>
-#define bswap_32(x) BSWAP_32(x)
-#define bswap_64(x) BSWAP_64(x)
-
-#elif defined(__FreeBSD__)
-
-#include <sys/endian.h>
-#define bswap_32(x) bswap32(x)
-#define bswap_64(x) bswap64(x)
-
-#elif defined(__OpenBSD__)
-
-#include <sys/types.h>
-#define bswap_32(x) swap32(x)
-#define bswap_64(x) swap64(x)
-
-#elif defined(__NetBSD__)
-
-#include <sys/types.h>
-#include <machine/bswap.h>
-#if defined(__BSWAP_RENAME) && !defined(__bswap_32)
-#define bswap_32(x) bswap32(x)
-#define bswap_64(x) bswap64(x)
-#endif
-
-#else
-
-#include <byteswap.h>
-
-#endif
-
 std::ostream& operator<<(std::ostream& os, const Signal& sig){
     std::cout << "[Signal] " << sig.name << ": " << std::endl;
     std::cout << "\t" << std::left << std::setw(20) << "size: " << sig.signalSize << std::endl;
@@ -111,10 +60,10 @@ std::istream& operator>>(std::istream& in, Signal& sig) {
     return in;
 }
 
-double Signal::decodeSignal(unsigned char rawPayload[MAX_MSG_LEN], int messageSize){
+double Signal::decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN], int messageSize){
     // Change endianness
     int64_t payload = 0;
-    for(int i = MAX_MSG_LEN; i > 0; i--) {
+    for(int i = MAX_FRAME_LEN; i > 0; i--) {
         payload <<= 8;
         payload |= (uint64_t)rawPayload[i-1];
     }
@@ -155,13 +104,13 @@ uint64_t Signal::encodeSignal(double physicalValue){
         currentBit++;
     }
     // Change endianness
-    unsigned char encodedPayload[MAX_MSG_LEN];
+    unsigned char encodedPayload[MAX_FRAME_LEN];
     for (short i = 8 - 1; i >= 0; i--) {
         encodedPayload[i] = encodedValue % 256; // get the last byte
         encodedValue /= 256; // get the remainder
     }
     encodedValue = 0;
-    for(int i = MAX_MSG_LEN; i > 0; i--) {
+    for(int i = MAX_FRAME_LEN; i > 0; i--) {
         encodedValue <<= 8;
         encodedValue |= (uint64_t)encodedPayload[i-1];
     }

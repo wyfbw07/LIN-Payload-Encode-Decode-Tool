@@ -86,7 +86,7 @@ bool LdfParser::parse(const std::string& filePath) {
         return false;
     }
     
-    // Data Integrity check: all signals should have corresponding encoding type and start bit
+    // Data Integrity check: all signals should have corresponding encoding type
     for (auto signal : signalsLibrary) {
         if (signal.second.getEncodingType() == NULL) {
             std::cerr << "Signal \"" << signal.second.getName()
@@ -95,15 +95,7 @@ bool LdfParser::parse(const std::string& filePath) {
             ldfFile.close();
             return false;
         }
-//        if (signal.second.getstartBit() == -1) {
-//            std::cerr << "Signal \"" << signal.second.getName() << "\" does not have a start bit. "
-//            << "This also means that the signal is not attached to any frame. Parse Failed." << std::endl;
-//            resetParsedContent();
-//            ldfFile.close();
-//            return false;
-//        }
     }
-    
     // All operations and data integrity check passed, parse success
     isEmptyLibrary = false;
     ldfFile.close();
@@ -111,13 +103,13 @@ bool LdfParser::parse(const std::string& filePath) {
     
 }
 
+// Actual implementation of parser
 void LdfParser::loadAndParseFromFile(std::istream& in) {
     std::string preconditionContent;
     std::string conditionName;
-    // Read the file line by line
+    // Read until a curly bracket
     while (getline(in, preconditionContent, '{')) {
         conditionName = utils::lastTokenOf(preconditionContent);
-        // Look for signal encoding types
         if (conditionName == "Signal_encoding_types") {
             std::string singleSigEncodingType = utils::getline(in, '}');
             while (singleSigEncodingType != "") {
@@ -239,8 +231,8 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
                         throw std::invalid_argument("Cannot find signal encoding type \"" + encodingTypeName
                                                     + "\". Parse Failed.");
                     }
-                    SignalEncodingType* encodingType_ptr = &(data_itr_encode_type->second);
                     // Link the signal encoding type to the signal
+                    SignalEncodingType* encodingType_ptr = &(data_itr_encode_type->second);
                     signalsLibrary_iterator data_itr = signalsLibrary.find(subscriber);
                     if (data_itr == signalsLibrary.end()) {
                         throw std::invalid_argument("Cannot find signal \"" + subscriber
@@ -260,7 +252,7 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
     }
 }
 
-std::map<std::string, double> LdfParser::decode(int& frameId, unsigned char payLoad[MAX_MSG_LEN], int& dlc){
+std::map<std::string, double> LdfParser::decode(int& frameId, unsigned char payLoad[MAX_FRAME_LEN], int& dlc){
     std::map<std::string, double> decodedValues, emptyResult;
     // Check if parser has info
     if (isEmptyLibrary) {
@@ -274,6 +266,7 @@ std::map<std::string, double> LdfParser::decode(int& frameId, unsigned char payL
         return emptyResult;
     }
     else {
+        // Check input payload's dlc
         if (dlc != data_itr_frm->second.getDlc()) {
             std::cerr << "The data length of the input payload does not match with LDF info. Decode failed. An empty result is returned." << std::endl;
             return emptyResult;
@@ -290,57 +283,60 @@ std::map<std::string, double> LdfParser::decode(int& frameId, unsigned char payL
 
 int LdfParser::encode(int& frameId,
                       std::vector<std::pair<std::string, double> > signalsToEncode,
-                      unsigned char encodedPayload[MAX_MSG_LEN]){
+                      unsigned char encodedPayload[MAX_FRAME_LEN]){
     // Check if parser has info
     if (isEmptyLibrary) {
         std::cout << "Parse LDF file first before encoding frames." << std::endl;
         return -1;
     }
-    
-    
+    // Find corresponding frame to encode
     framesLibrary_iterator data_itr_frm = framesLibrary.find(frameId);
     if (data_itr_frm == framesLibrary.end()) {
         std::cout << "No matching frame found. Encode failed. An empty result is returned.\n" << std::endl;
         return -1;
     }
-    else {
-        int dlc = data_itr_frm->second.getDlc();
-        std::vector<Signal*> signalsName = framesLibrary[frameId].getConnectedSignals();
-        // Check input
-        bool validInput = false;
-        for (size_t i = 0; i < signalsToEncode.size(); i++) {
-            for (size_t j = 0; j < signalsName.size(); j++) {
-                if (signalsName[j]->getName() == signalsToEncode[i].first) {
-                    
-                    validInput = true;
-                }
-            }
-            if (!validInput) {
-                throw std::invalid_argument("Cannot find signal: " + signalsToEncode[i].first
-                                            + " in LIN database. Encode failed.");
+    // Get all signals under the frame
+    int dlc = data_itr_frm->second.getDlc();
+    std::vector<Signal*> signalsName = framesLibrary[frameId].getConnectedSignals();
+    // Check input validity
+    bool validInput = false;
+    for (size_t i = 0; i < signalsToEncode.size(); i++) {
+        for (size_t j = 0; j < signalsName.size(); j++) {
+            if (signalsName[j]->getName() == signalsToEncode[i].first) {
+                validInput = true;
             }
         }
-        // Encode
-        int physicalValue = 0; uint64_t encodedValue = 0; encodedValue = ~encodedValue;
-        for (size_t i = 0; i < signalsName.size(); i++) {
-            bool hasPhysicalValue = false;
-            for (size_t j = 0; j < signalsToEncode.size(); j++) {
-                if (signalsName[i]->getName() == signalsToEncode[j].first) {
-                    physicalValue = signalsToEncode[j].second;
-                    hasPhysicalValue = true;
-                }
-            }
-            // If no physical value is provided upon encoding, use the intial value
-            if (!hasPhysicalValue) {
-                physicalValue = signalsName[i]->getInitValue();
-            }
-            uint64_t singleEncodedValue = signalsName[i]->encodeSignal(physicalValue);
-            encodedValue &= singleEncodedValue;
+        if (!validInput) {
+            throw std::invalid_argument("Cannot find signal: " + signalsToEncode[i].first + "\" under Frame \""
+                                        + data_itr_frm->second.getName() + "\". Encode failed.");
         }
-        for (short i = 8 - 1; i >= 0; i--) {
-            encodedPayload[i] = encodedValue % 256; // get the last byte
-            encodedValue /= 256; // get the remainder
-        }
-        return dlc;
     }
+    // In LIN, recessive bit is 1. Initialize encoded value with all 1s.
+    int physicalValue = 0;
+    uint64_t encodedValue = 0;
+    encodedValue = ~encodedValue;
+    // Retrive physical value for each signal
+    for (size_t i = 0; i < signalsName.size(); i++) {
+        bool hasPhysicalValue = false;
+        for (size_t j = 0; j < signalsToEncode.size(); j++) {
+            if (signalsName[i]->getName() == signalsToEncode[j].first) {
+                physicalValue = signalsToEncode[j].second;
+                hasPhysicalValue = true;
+            }
+        }
+        // If no physical value is provided upon encoding, use the intial value
+        if (!hasPhysicalValue) {
+            physicalValue = signalsName[i]->getInitValue();
+        }
+        // Encode this signal
+        uint64_t singleEncodedValue = signalsName[i]->encodeSignal(physicalValue);
+        // Add single encoded value to encoded value
+        encodedValue &= singleEncodedValue;
+    }
+    // Split the 64-bit encoded value into a byte array
+    for (short i = 8 - 1; i >= 0; i--) {
+        encodedPayload[i] = encodedValue % 256; // get the last byte
+        encodedValue /= 256; // get the remainder
+    }
+    return dlc;
 }
