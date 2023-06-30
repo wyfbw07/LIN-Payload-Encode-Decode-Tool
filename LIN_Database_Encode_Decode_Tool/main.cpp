@@ -26,13 +26,20 @@ int main()
                 int dlc = 2;
                 int frameId = 2;
                 unsigned char rawPayload[8] = { 0x25, 0xa8, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
-                std::map<std::string, double> result = ldfFile.decode(frameId, rawPayload, dlc);
+                std::map<std::string, std::tuple<double, std::string, ValueType> > result = ldfFile.decode(frameId, rawPayload, dlc);
                 // Print decoded message info
                 std::cout << "-----------------------------------------------" << std::endl;
                 std::cout << "Decoded signal values: \n";
                 for (auto& decodedSig : result) {
-                    std::cout << "\t[Signal] " << decodedSig.first << ": " << decodedSig.second << std::endl;
+                    std::cout << "\t[Signal] " << decodedSig.first << ": " << std::get<0>(decodedSig.second);
+                    if (std::get<1>(decodedSig.second) != "") {
+                        std::cout << " " << std::get<1>(decodedSig.second) << std::endl;
+                    }
+                    else {
+                        std::cout << std::endl;
+                    }
                 }
+                
                 /* Sample output should look like:
                  Decoded signal values:
                  [Signal] Head_Position: 0
@@ -69,7 +76,6 @@ int main()
     catch (std::invalid_argument& err) {
         std::cout << "[Exception catched] " << err.what() << '\n';
     }
-    
     
     // Memory test
     //    std::vector<LdfParser> parsers;

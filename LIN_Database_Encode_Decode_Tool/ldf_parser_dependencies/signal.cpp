@@ -60,7 +60,7 @@ std::istream& operator>>(std::istream& in, Signal& sig) {
     return in;
 }
 
-double Signal::decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN], int messageSize){
+std::tuple<double, std::string, ValueType> Signal::decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN]){
     // Change endianness
     int64_t payload = 0;
     for(int i = MAX_FRAME_LEN; i > 0; i--) {
@@ -68,21 +68,23 @@ double Signal::decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN], int message
         payload |= (uint64_t)rawPayload[i-1];
     }
     // Decode raw value
-    int64_t decodedValue = 0;
+    int64_t decodedRawValue = 0;
     uint8_t* data = (uint8_t*)&payload;
     unsigned int currentBit = startBit;
     // Access the corresponding byte and make sure we are reading a bit that is 1
     for (unsigned short bitpos = 0; bitpos < signalSize; bitpos++) {
         if (data[currentBit / CHAR_BIT] & (1 << (currentBit % CHAR_BIT))) {
-            decodedValue |= (1ULL << bitpos);
+            decodedRawValue |= (1ULL << bitpos);
         }
         currentBit++;
     }
     // Apply linear transformation
-    int factor, offset;
-    factor = encodingType->getFactor(decodedValue);
-    offset = encodingType->getOffset(decodedValue);
-    return (double)decodedValue * factor + offset;
+    ValueType sigValueType = encodingType->getValueTypeFromRawValue(decodedRawValue);
+    std::string unit = encodingType->getUnitFromRawValue(decodedRawValue);
+    int factor = encodingType->getFactorFromRawValue(decodedRawValue);
+    int offset = encodingType->getOffsetFromRawValue(decodedRawValue);
+    int decodedPhysicalValue = (double)decodedRawValue * factor + offset;
+    return std::make_tuple(decodedPhysicalValue, unit, sigValueType);
 }
 
 uint64_t Signal::encodeSignal(double physicalValue){
@@ -90,9 +92,10 @@ uint64_t Signal::encodeSignal(double physicalValue){
     // to convert the signals physical value into the signal's raw value
     unsigned int currentBit = 0;
     uint64_t encodedValue = 0; encodedValue = ~encodedValue;
-    int offset = encodingType->getOffset(physicalValue);
-    int factor = encodingType->getFactor(physicalValue);
-    unsigned int rawValue = (physicalValue - offset) / factor;
+    // TODO: Need overhual, check for logical values
+    int offset = encodingType->getOffsetFromPhysicalValue(physicalValue);
+    int factor = encodingType->getFactorFromPhysicalValue(physicalValue);
+    uint64_t rawValue = (physicalValue - offset) / factor;
     uint8_t* rawPayload = (uint8_t*)&rawValue;
     // Encode
     for (unsigned short bitpos = 0; bitpos < signalSize; bitpos++) {

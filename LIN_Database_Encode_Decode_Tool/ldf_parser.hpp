@@ -21,19 +21,22 @@ public:
     // Construct using either a File or a Stream of a LDF-File
     // A bool is used to indicate whether parsing succeeds or not
     bool parse(const std::string& filePath);
-    // Decode/Encode
-    std::map<std::string, double> decode(int& frameId, unsigned char payLoad[MAX_FRAME_LEN], int& dlc);
+    // Encode
     int encode(int& frameId,
                std::vector<std::pair<std::string, double> > signalsToEncode,
                unsigned char encodedPayload[MAX_FRAME_LEN]);
+    // Decode
+    std::map<std::string, std::tuple<double, std::string, ValueType> > decode(int& frameId,
+                                                                              unsigned char payLoad[MAX_FRAME_LEN],
+                                                                              int& dlc);
     // Print LDF info
     friend std::ostream& operator<<(std::ostream& os, const LdfParser& ldfFile);
 
 private:
 
-    typedef std::map<int, Frame>::iterator framesLibrary_iterator;
-    typedef std::map<std::string, Signal>::iterator signalsLibrary_iterator;
-    typedef std::map<std::string, SignalEncodingType>::iterator sigEncodingTypeLibrary_iterator;
+    typedef std::map<int, Frame>::iterator framesLib_iterator;
+    typedef std::map<std::string, Signal>::iterator signalsLib_iterator;
+    typedef std::map<std::string, SignalEncodingType>::iterator sigEncodingTypeLib_iterator;
     bool isEmptyLibrary = true;
     bool isEmptyFramesLibrary = true;
     bool isEmptySignalsLibrary = true;

@@ -34,7 +34,7 @@ public:
     void setEncodingType(SignalEncodingType* encodingType) {this->encodingType = encodingType; }
     void setSubscribers(const std::vector<std::string>& subscribers) { this->subscribers = subscribers; }
     // Decode/Encode
-    double decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN], int messageSize);
+    std::tuple<double, std::string, ValueType> decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN]);
     uint64_t encodeSignal(double physicalValue);
     // Operator overload, allows parsing of signals info
     friend std::istream& operator>>(std::istream& in, Signal& sig);
