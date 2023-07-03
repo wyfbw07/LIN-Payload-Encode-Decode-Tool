@@ -13,10 +13,10 @@
 #include "ldf_parser_helper.hpp"
 
 std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncodingType) {
-	std::cout << "[Signal Encoding Type] " << sigEncodingType.name << ": " << std::endl;
+	std::cout << "<Signal Encoding Type> " << sigEncodingType.name << ": " << std::endl;
 	for (size_t i = 0; i < sigEncodingType.encodingTypes.size(); i++) {
 		if (std::get<2>(sigEncodingType.encodingTypes[i]) == ValueType::PhysicalValue) {
-			std::cout << "\t[Physical value] min: " << std::get<0>(sigEncodingType.encodingTypes[i])[0]
+			std::cout << "\t<Physical value> min: " << std::get<0>(sigEncodingType.encodingTypes[i])[0]
 				<< " max: " << std::get<0>(sigEncodingType.encodingTypes[i])[1]
 				<< " factor: " << std::get<0>(sigEncodingType.encodingTypes[i])[2]
 				<< " offset: " << std::get<0>(sigEncodingType.encodingTypes[i])[3];
@@ -28,7 +28,7 @@ std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncoding
 			}
 		}
 		else if (std::get<2>(sigEncodingType.encodingTypes[i]) == ValueType::LogicalValue) {
-			std::cout << "\t[Logical value] \""
+			std::cout << "\t<Logical value> \""
 				<< std::get<0>(sigEncodingType.encodingTypes[i])[0] << "\" means \""
 				<< std::get<1>(sigEncodingType.encodingTypes[i]) << "\"" << std::endl;
 		}
@@ -45,8 +45,8 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
 		if (valueTypeName == "physical_value") {
 			int min = utils::stoi(utils::getline(singleValueTypeStream, ','));
 			int max = utils::stoi(utils::getline(singleValueTypeStream, ','));
-			int factor = utils::stoi(utils::getline(singleValueTypeStream, ','));
-			int offset = utils::stoi(utils::getline(singleValueTypeStream, ','));
+			double factor = std::stod(utils::getline(singleValueTypeStream, ','));
+			double offset = std::stod(utils::getline(singleValueTypeStream, ','));
 			std::string unit = utils::getline(singleValueTypeStream, ';');
 			// Remove quotation marks if unit exists
 			if (unit != "") {
@@ -54,7 +54,7 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
 				unitStream >> std::quoted(unit);
 			}
 			// Store physical value info
-			std::array<int, 4> tmpArray = { min, max, factor, offset };
+            std::array<double, 4> tmpArray = { (double)min, (double)max, factor, offset };
 			sigEncodingType.encodingTypes.push_back(std::make_tuple(tmpArray, unit, ValueType::PhysicalValue));
 		}
 		else if (valueTypeName == "logical_value") {
@@ -66,16 +66,16 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
 				unitStream >> std::quoted(valueDescription);
 			}
 			// Store logical value info. Logical values always have a factor of 1 and an offset of 0
-			std::array<int, 4> tmpArray = { value, value, 1, 0 };
+			std::array<double, 4> tmpArray = { (double)value, (double)value, 1, 0 };
 			sigEncodingType.encodingTypes.push_back(std::make_tuple(tmpArray, valueDescription, ValueType::LogicalValue));
 		}
 		// Get next value type
-		singleValueType = utils::getline(in, '}');
+		singleValueType = utils::getline(in, ';');
 	}
 	return in;
 }
 
-std::tuple<std::array<int, 4>, std::string, ValueType> SignalEncodingType::getTypeInfoFromRawValue(int64_t& rawValue) const {
+std::tuple<std::array<double, 4>, std::string, ValueType> SignalEncodingType::getTypeInfoFromRawValue(int64_t& rawValue) const {
 	if (encodingTypes.size() != 0) {
 		for (size_t i = 0; i < encodingTypes.size(); i++) {
 			int min = std::get<0>(encodingTypes[i])[0];
@@ -85,12 +85,12 @@ std::tuple<std::array<int, 4>, std::string, ValueType> SignalEncodingType::getTy
 			}
 		}
 	}
-	std::tuple<std::array<int, 4>, std::string, ValueType> emptyResult{};
+	std::tuple<std::array<double, 4>, std::string, ValueType> emptyResult{};
 	std::get<2>(emptyResult) = ValueType::NotSet;
 	return emptyResult;
 }
 
-std::tuple<std::array<int, 4>, std::string, ValueType> SignalEncodingType::getTypeInfoFromPhysicalValue(double& physicalValue) const {
+std::tuple<std::array<double, 4>, std::string, ValueType> SignalEncodingType::getTypeInfoFromPhysicalValue(double& physicalValue) const {
 	int minForPhysicalValue;
 	int maxForPhysicalValue;
 	for (size_t i = 0; i < encodingTypes.size(); i++) {
@@ -101,7 +101,5 @@ std::tuple<std::array<int, 4>, std::string, ValueType> SignalEncodingType::getTy
 			return encodingTypes[i];
 		}
 	}
-	std::tuple<std::array<int, 4>, std::string, ValueType> emptyResult{};
-	std::get<2>(emptyResult) = ValueType::NotSet;
-	return emptyResult;
+    throw std::invalid_argument("Undefined input value for signal encoding type \"" + name + "\". Encode Failed.");
 }

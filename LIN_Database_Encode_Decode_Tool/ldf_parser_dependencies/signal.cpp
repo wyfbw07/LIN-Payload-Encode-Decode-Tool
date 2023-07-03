@@ -13,7 +13,7 @@
 #include "ldf_parser_helper.hpp"
 
 std::ostream& operator<<(std::ostream& os, const Signal& sig) {
-	std::cout << "[Signal] " << sig.name << ": " << std::endl;
+	std::cout << "<Signal> " << sig.name << ": " << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "size: " << sig.signalSize << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "start bit: " << sig.startBit << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "initial value: " << sig.initValue << std::endl;
@@ -81,8 +81,8 @@ std::tuple<double, std::string, ValueType> Signal::decodeSignal(unsigned char ra
 	// Apply linear transformation
 	ValueType sigValueType = encodingType->getValueTypeFromRawValue(decodedRawValue);
 	std::string unit = encodingType->getUnitFromRawValue(decodedRawValue);
-	int factor = encodingType->getFactorFromRawValue(decodedRawValue);
-	int offset = encodingType->getOffsetFromRawValue(decodedRawValue);
+	double factor = encodingType->getFactorFromRawValue(decodedRawValue);
+	double offset = encodingType->getOffsetFromRawValue(decodedRawValue);
 	double decodedPhysicalValue = (double)decodedRawValue * factor + offset;
 	return std::make_tuple(decodedPhysicalValue, unit, sigValueType);
 }

@@ -12,7 +12,7 @@
 #include "frame.hpp"
 
 std::ostream& operator<<(std::ostream& os, const Frame& frm) {
-	std::cout << "[Frame] " << frm.name << ": " << std::endl;
+	std::cout << "<Frame> " << frm.name << ": " << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "id: " << frm.id << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "size: " << frm.messageSize << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "publisher: " << frm.publisher << std::endl;
