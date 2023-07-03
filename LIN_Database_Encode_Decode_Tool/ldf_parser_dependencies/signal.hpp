@@ -35,7 +35,7 @@ public:
 	void setSubscribers(const std::vector<std::string>& subscribers) { this->subscribers = subscribers; }
 	// Decode/Encode
 	std::tuple<double, std::string, ValueType> decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN]);
-	uint64_t encodeSignal(double physicalValue);
+	uint64_t encodeSignal(double valueToEncode, bool isInitialValue);
 	// Operator overload, allows parsing of signals info
 	friend std::istream& operator>>(std::istream& in, Signal& sig);
 	friend std::ostream& operator<<(std::ostream& os, const Signal& sig);

@@ -12,7 +12,7 @@
 
 int main()
 {
-	int operationChoice = 1;
+	int operationChoice = 2;
 	// Create a class to store LDF info
 	LdfParser ldfFile;
 	try {
@@ -46,11 +46,11 @@ int main()
 		case 2:
 		{
 			// Encode test case
-			int frameId = 1;
-			int encodedDlc = 0;
+			int frameId = 0x20;
+			int encodedDlc = 4;
 			unsigned char encodedPayload[8];
 			std::vector<std::pair<std::string, double> > signalsToEncode;
-			signalsToEncode.push_back(std::make_pair("DriverID", 3));
+//			signalsToEncode.push_back(std::make_pair("DriverID", 3));
 			encodedDlc = ldfFile.encode(frameId, signalsToEncode, encodedPayload);
 			// Print results
 			std::cout << "-----------------------------------------------" << std::endl;

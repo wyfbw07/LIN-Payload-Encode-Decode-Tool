@@ -87,17 +87,22 @@ std::tuple<double, std::string, ValueType> Signal::decodeSignal(unsigned char ra
 	return std::make_tuple(decodedPhysicalValue, unit, sigValueType);
 }
 
-uint64_t Signal::encodeSignal(double physicalValue) {
+uint64_t Signal::encodeSignal(double valueToEncode, bool isInitialValue) {
 	// Reverse linear conversion rule
 	// to convert the signals physical value into the signal's raw value
-	unsigned int currentBit = 0;
 	uint64_t encodedValue = 0; encodedValue = ~encodedValue;
-	// TODO: Need overhual, check for logical values
-	int offset = encodingType->getOffsetFromPhysicalValue(physicalValue);
-	int factor = encodingType->getFactorFromPhysicalValue(physicalValue);
-	uint64_t rawValue = (uint64_t)(physicalValue - offset) / factor;
+    uint64_t rawValue;
+    if (isInitialValue) {
+        rawValue = valueToEncode;
+    }
+    else {
+        double offset = encodingType->getOffsetFromPhysicalValue(valueToEncode);
+        double factor = encodingType->getFactorFromPhysicalValue(valueToEncode);
+        rawValue = (uint64_t)(valueToEncode - offset) / factor;
+    }
+    // Encode
+    unsigned int currentBit = 0;
 	uint8_t* rawPayload = (uint8_t*)&rawValue;
-	// Encode
 	for (unsigned short bitpos = 0; bitpos < signalSize; bitpos++) {
 		// Access the corresponding byte and make sure we are reading a dominant bit 0
 		if (!(rawPayload[currentBit / CHAR_BIT] & (1 << (currentBit % CHAR_BIT)))) {

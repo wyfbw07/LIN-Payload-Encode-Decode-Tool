@@ -328,11 +328,15 @@ int LdfParser::encode(int& frameId,
 			}
 		}
 		// If no physical value is provided upon encoding, use the intial value
+        // Then encode this signal
+        uint64_t singleEncodedValue;
 		if (!hasPhysicalValue) {
 			physicalValue = signalsName[i]->getInitValue();
+            singleEncodedValue = signalsName[i]->encodeSignal(physicalValue, true);
 		}
-		// Encode this signal
-		uint64_t singleEncodedValue = signalsName[i]->encodeSignal(physicalValue);
+        else {
+            singleEncodedValue = signalsName[i]->encodeSignal(physicalValue, false);
+        }
 		// Add single encoded value to encoded value
 		encodedValue &= singleEncodedValue;
 	}
