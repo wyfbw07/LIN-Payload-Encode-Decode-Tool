@@ -252,10 +252,10 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
 	}
 }
 
-std::map<std::string, std::tuple<double, std::string, ValueType> > LdfParser::decode(int& frameId,
+std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType> > LdfParser::decode(int& frameId,
 	unsigned char payLoad[MAX_FRAME_LEN],
 	int& dlc) {
-	std::map<std::string, std::tuple<double, std::string, ValueType> > results, emptyResult;
+	std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType> > results, emptyResult;
 	// Check if parser has info
 	if (isEmptyLibrary) {
 		std::cout << "Parse LDF file first before decoding frames." << std::endl;
@@ -277,7 +277,7 @@ std::map<std::string, std::tuple<double, std::string, ValueType> > LdfParser::de
 		// Decode each signal under the frame
 		std::vector<Signal*> connectedSignals = framesLibrary[frameId].getConnectedSignals();
 		for (size_t i = 0; i < connectedSignals.size(); i++) {
-			std::tuple<double, std::string, ValueType> decodedSignalValue = connectedSignals[i]->decodeSignal(payLoad);
+			std::tuple<double, std::string, LinSignalEncodingValueType> decodedSignalValue = connectedSignals[i]->decodeSignal(payLoad);
 			results.insert(std::make_pair(connectedSignals[i]->getName(), decodedSignalValue));
 		}
 	}

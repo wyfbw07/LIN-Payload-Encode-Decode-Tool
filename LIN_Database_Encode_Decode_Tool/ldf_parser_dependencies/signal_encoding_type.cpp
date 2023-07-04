@@ -15,7 +15,7 @@
 std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncodingType) {
 	std::cout << "<Signal Encoding Type> " << sigEncodingType.name << ": " << std::endl;
 	for (size_t i = 0; i < sigEncodingType.encodingTypes.size(); i++) {
-		if (std::get<2>(sigEncodingType.encodingTypes[i]) == ValueType::PhysicalValue) {
+		if (std::get<2>(sigEncodingType.encodingTypes[i]) == LinSignalEncodingValueType::PhysicalValue) {
 			std::cout << "\t<Physical value> min: " << std::get<0>(sigEncodingType.encodingTypes[i])[0]
 				<< " max: " << std::get<0>(sigEncodingType.encodingTypes[i])[1]
 				<< " factor: " << std::get<0>(sigEncodingType.encodingTypes[i])[2]
@@ -27,7 +27,7 @@ std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncoding
 				std::cout << std::endl;
 			}
 		}
-		else if (std::get<2>(sigEncodingType.encodingTypes[i]) == ValueType::LogicalValue) {
+		else if (std::get<2>(sigEncodingType.encodingTypes[i]) == LinSignalEncodingValueType::LogicalValue) {
 			std::cout << "\t<Logical value> \""
 				<< std::get<0>(sigEncodingType.encodingTypes[i])[0] << "\" means \""
 				<< std::get<1>(sigEncodingType.encodingTypes[i]) << "\"" << std::endl;
@@ -55,7 +55,7 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
 			}
 			// Store physical value info
             std::array<double, 4> tmpArray = { (double)min, (double)max, factor, offset };
-			sigEncodingType.encodingTypes.push_back(std::make_tuple(tmpArray, unit, ValueType::PhysicalValue));
+			sigEncodingType.encodingTypes.push_back(std::make_tuple(tmpArray, unit, LinSignalEncodingValueType::PhysicalValue));
 		}
 		else if (valueTypeName == "logical_value") {
 			int value = utils::stoi(utils::getline(singleValueTypeStream, ','));
@@ -67,7 +67,7 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
 			}
 			// Store logical value info. Logical values always have a factor of 1 and an offset of 0
 			std::array<double, 4> tmpArray = { (double)value, (double)value, 1, 0 };
-			sigEncodingType.encodingTypes.push_back(std::make_tuple(tmpArray, valueDescription, ValueType::LogicalValue));
+			sigEncodingType.encodingTypes.push_back(std::make_tuple(tmpArray, valueDescription, LinSignalEncodingValueType::LogicalValue));
 		}
 		// Get next value type
 		singleValueType = utils::getline(in, ';');
@@ -75,7 +75,7 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
 	return in;
 }
 
-std::tuple<std::array<double, 4>, std::string, ValueType> SignalEncodingType::getTypeInfoFromRawValue(int64_t& rawValue) const {
+std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> SignalEncodingType::getTypeInfoFromRawValue(int64_t& rawValue) const {
 	if (encodingTypes.size() != 0) {
 		for (size_t i = 0; i < encodingTypes.size(); i++) {
 			int min = std::get<0>(encodingTypes[i])[0];
@@ -85,12 +85,12 @@ std::tuple<std::array<double, 4>, std::string, ValueType> SignalEncodingType::ge
 			}
 		}
 	}
-	std::tuple<std::array<double, 4>, std::string, ValueType> emptyResult{};
-	std::get<2>(emptyResult) = ValueType::NotSet;
+	std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> emptyResult{};
+	std::get<2>(emptyResult) = LinSignalEncodingValueType::NotSet;
 	return emptyResult;
 }
 
-std::tuple<std::array<double, 4>, std::string, ValueType> SignalEncodingType::getTypeInfoFromPhysicalValue(double& physicalValue) const {
+std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> SignalEncodingType::getTypeInfoFromPhysicalValue(double& physicalValue) const {
 	int minForPhysicalValue;
 	int maxForPhysicalValue;
 	for (size_t i = 0; i < encodingTypes.size(); i++) {
