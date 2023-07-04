@@ -17,7 +17,12 @@ std::ostream& operator<<(std::ostream& os, const Signal& sig) {
 	std::cout << "\t" << std::left << std::setw(20) << "size: " << sig.signalSize << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "start bit: " << sig.startBit << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "initial value: " << sig.initValue << std::endl;
-	std::cout << "\t" << std::left << std::setw(20) << "Encode type: " << sig.encodingType->getName() << std::endl;
+    if (sig.encodingType != NULL) {
+        std::cout << "\t" << std::left << std::setw(20) << "Encode type: " << sig.encodingType->getName() << std::endl;
+    }
+    else {
+        std::cout << "\t" << std::left << std::setw(20) << "No Encode type" << std::endl;
+    }
 	std::cout << "\t" << std::left << std::setw(20) << "publisher: " << sig.publisher << std::endl;
 	if (sig.subscribers.size() != 0) {
 		std::cout << "\t" << std::left << std::setw(20) << std::to_string(sig.subscribers.size()) + " subscriber(s): ";
@@ -60,7 +65,7 @@ std::istream& operator>>(std::istream& in, Signal& sig) {
 	return in;
 }
 
-std::tuple<double, std::string, ValueType> Signal::decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN]) {
+std::tuple<double, std::string, LinSignalEncodingValueType> Signal::decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN]) {
 	// Change endianness
 	int64_t payload = 0;
 	for (int i = MAX_FRAME_LEN; i > 0; i--) {
@@ -79,7 +84,7 @@ std::tuple<double, std::string, ValueType> Signal::decodeSignal(unsigned char ra
 		currentBit++;
 	}
 	// Apply linear transformation
-	ValueType sigValueType = encodingType->getValueTypeFromRawValue(decodedRawValue);
+	LinSignalEncodingValueType sigValueType = encodingType->getValueTypeFromRawValue(decodedRawValue);
 	std::string unit = encodingType->getUnitFromRawValue(decodedRawValue);
 	double factor = encodingType->getFactorFromRawValue(decodedRawValue);
 	double offset = encodingType->getOffsetFromRawValue(decodedRawValue);

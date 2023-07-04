@@ -85,17 +85,17 @@ bool LdfParser::parse(const std::string& filePath) {
 		ldfFile.close();
 		return false;
 	}
-
-	// Data Integrity check: all signals should have corresponding encoding type
-	for (auto signal : signalsLibrary) {
-		if (signal.second.getEncodingType() == NULL) {
-			std::cerr << "Signal \"" << signal.second.getName()
-				<< "\" does not have a corresponding encoding type. Parse Failed." << std::endl;
-			resetParsedContent();
-			ldfFile.close();
-			return false;
-		}
-	}
+//
+//	// Data Integrity check: all signals should have corresponding encoding type
+//	for (auto signal : signalsLibrary) {
+//		if (signal.second.getEncodingType() == NULL) {
+//			std::cerr << "Signal \"" << signal.second.getName()
+//				<< "\" does not have a corresponding encoding type. Parse Failed." << std::endl;
+//			resetParsedContent();
+//			ldfFile.close();
+//			return false;
+//		}
+//	}
 	// All operations and data integrity check passed, parse success
 	isEmptyLibrary = false;
 	ldfFile.close();
@@ -289,13 +289,13 @@ int LdfParser::encode(int& frameId,
 	unsigned char encodedPayload[MAX_FRAME_LEN]) {
 	// Check if parser has info
 	if (isEmptyLibrary) {
-		std::cout << "Parse LDF file first before encoding frames." << std::endl;
+		std::cerr << "Parse LDF file first before encoding frames." << std::endl;
 		return -1;
 	}
 	// Find corresponding frame to encode
 	framesLib_iterator data_itr_frm = framesLibrary.find(frameId);
 	if (data_itr_frm == framesLibrary.end()) {
-		std::cout << "No matching frame found. Encode failed. An empty result is returned.\n" << std::endl;
+		std::cerr << "No matching frame found. Encode failed. An empty result is returned.\n" << std::endl;
 		return -1;
 	}
 	// Get all signals under the frame
@@ -305,13 +305,14 @@ int LdfParser::encode(int& frameId,
 	bool validInput = false;
 	for (size_t i = 0; i < signalsToEncode.size(); i++) {
 		for (size_t j = 0; j < signalsName.size(); j++) {
-			if (signalsName[j]->getName() == signalsToEncode[i].first) {
+			if (signalsToEncode[i].first == signalsName[j]->getName()) {
 				validInput = true;
 			}
 		}
 		if (!validInput) {
-			throw std::invalid_argument("Cannot find signal: " + signalsToEncode[i].first
-				+ "\" under Frame \"" + data_itr_frm->second.getName() + "\". Encode failed.");
+            std::cerr << "Cannot find signal: " << signalsToEncode[i].first
+            << "\" under Frame \"" << data_itr_frm->second.getName() << "\". Encode failed." << std::endl;
+            return -1;
 		}
 	}
 	// In LIN, recessive bit is 1. Initialize encoded value with all 1s.
@@ -322,7 +323,7 @@ int LdfParser::encode(int& frameId,
 	for (size_t i = 0; i < signalsName.size(); i++) {
 		bool hasPhysicalValue = false;
 		for (size_t j = 0; j < signalsToEncode.size(); j++) {
-			if (signalsName[i]->getName() == signalsToEncode[j].first) {
+			if (signalsToEncode[j].first == signalsName[i]->getName()) {
 				physicalValue = signalsToEncode[j].second;
 				hasPhysicalValue = true;
 			}

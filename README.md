@@ -33,7 +33,7 @@ bool LdfParser::parse(const std::string& filePath);
 | About this function | Description                                                  |
 | :------------------ | :----------------------------------------------------------- |
 | Use case            | To load and parse a LDF file, given the file path in string  |
-| Return value        | A bool to indicate whether parsing succeeds (true) or not (false) |
+| Return values       | A bool to indicate whether parsing succeeds (true) or not (false) |
 
 Sample usage of this function:
 
@@ -70,7 +70,7 @@ For signal encoding type classes, these information will be parsed:
 
 
 
-### Print DBC File Info
+### Print LDF File Info
 
 ```c++
 friend std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigEncodingType);
@@ -79,7 +79,7 @@ friend std::ostream& operator<<(std::ostream& os, const SignalEncodingType& sigE
 | About this function | Description                                  |
 | :------------------ | :------------------------------------------- |
 | Use case            | To display all info in the LIN database File |
-| Return value        | std::cout in terminal                        |
+| Return values       | std::cout in terminal                        |
 
 Sample usage of this function:
 
@@ -91,23 +91,77 @@ Use this function to display LDF file info once a LDF file is loaded and parsed.
 
 
 
+### Decode a frame
+
+```c++
+std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType> > decode(int& frameId, unsigned char payLoad[MAX_FRAME_LEN], int& dlc);
+```
+
+| About this function | Description                                                  |
+| :------------------ | :----------------------------------------------------------- |
+| Use case            | To decode an entire LIN frame payload                        |
+| Input parameters    | (Frame ID, An array of frame payload, Frame size)            |
+| Return values       | <Signal name, <Decoded value, Unit\|Description of decoded value, Valuetype: Physical Value\|Logical value> > |
+
+Sample usage of this function:
+
+```c++
+unsigned char rawPayload[8] = { 0xa0, 0x0, 0x0, 0x08, 0x00, 0x00, 0x00, 0x00 };
+std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType> > result;
+result = ldfFile.decode(10, rawPayload, 4);
+```
+
+The function will return an map, where the first is signal name, and the second is a tuple that consists of decoded value, unit of decoded value, and an enum LinSignalEncodingValueType. LinSignalEncodingValueType can be either PhysicalValue or LogicalValue, and the previous slot of the tuple will be the unit or description of decoded value correspondingly. 
+
+
+
+### Encode a frame
+
+```c++
+int encode(int& frameId, std::vector<std::pair<std::string, double> > signalsToEncode, unsigned char encodedPayload[MAX_FRAME_LEN]);
+```
+
+| About this function | Description                                                  |
+| :------------------ | :----------------------------------------------------------- |
+| Use case            | To encode a LIN frame payload                                |
+| Input parameters    | (Frame ID, An vector of pair of signal name and physical value, A fixed size 8 slots array that contains the encoded payload) |
+| Return values       | Frame size of the encoded payload                            |
+
+Sample usage of this function:
+
+```c++
+// Prepare data
+unsigned int encodedDlc = 0;
+unsigned char encodedPayload[8];
+std::vector<std::pair<std::string, double> > signalsToEncode;
+signalsToEncode.push_back(std::make_pair("EngSpeed", 50));
+signalsToEncode.push_back(std::make_pair("EngSpeed_Second", 1535));
+// Encode
+encodedDlc = ldfFile.encode(168, signalsToEncode, encodedPayload);
+```
+
+The function encodes one or more signals at once into a single frame payload. The fixed size encodedPayload array contains the encoded payload once the function has been called. An additional value is returned to specify the message size of the encoded payload. If one or more signal values are not provided upon encoding, initial values defined in LDF will be used to encode the frame.
+
+
+
 ## Resources
 
 This tool is developed with XL-Driver-Library in mind. The free-of-charge XL-Driver-Library is a universal programming interface you can use to create your own applications while accessing Vector’s powerful hardware interfaces. 
 
+[User Manual](https://cdn.vector.com/cms/content/products/XL_Driver_Library/Docs/XL_Driver_Library_Manual_EN.pdf) of [XL-Driver-Library](https://www.vector.com/int/en/products/products-a-z/libraries-drivers/xl-driver-library/#) by Vector Informatik GmbH.
+
 Reference PDF for LIN bus [LIN Specification Package Revision 2.2A](https://cdn.vector.com/cms/content/know-how/lin/LIN-Spec_2.2_Rev_A.PDF) by LIN Consortium.
 
-[User Manual](https://cdn.vector.com/cms/content/products/XL_Driver_Library/Docs/XL_Driver_Library_Manual_EN.pdf) of [XL-Driver-Library](https://www.vector.com/int/en/products/products-a-z/libraries-drivers/xl-driver-library/#) by Vector Informatik GmbH.
+Reference PDF for LIN bus [LIN Specification Package Revision 2.1](https://lin-cia.org/fileadmin/microsites/lin-cia.org/resources/documents/LIN-Spec_Pac2_1.pdf) by LIN Consortium.
+
+
+
+## Notice
+
+- This tool does not currently support parsing, decoding and encoding of signals that has init_value_array as initial value since there are little usage of this type of signal.
 
 
 
 ## What's New
 
-- This tool now supports decoding of LDF frames.
-- Completely new LDF parser so that it can parse normally even if the file content structure is not exactly identical.
-
-
-
-## To Dos
-
-- Encoding of LIN frame payloads.
+- This tool now supports encoding of LDF frames.

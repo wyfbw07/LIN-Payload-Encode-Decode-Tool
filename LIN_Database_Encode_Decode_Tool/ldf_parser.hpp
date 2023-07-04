@@ -26,7 +26,7 @@ public:
 		std::vector<std::pair<std::string, double> > signalsToEncode,
 		unsigned char encodedPayload[MAX_FRAME_LEN]);
 	// Decode
-	std::map<std::string, std::tuple<double, std::string, ValueType> > decode(int& frameId,
+	std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType> > decode(int& frameId,
 		unsigned char payLoad[MAX_FRAME_LEN],
 		int& dlc);
 	// Print LDF info

@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-enum class ValueType {
+enum class LinSignalEncodingValueType {
 	LogicalValue,
 	PhysicalValue,
 	NotSet
@@ -33,7 +33,7 @@ public:
 	double getFactorFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[2]; }
 	int getMaxValueFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[1]; }
 	int getMinValueFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[0]; }
-	ValueType getValueTypeFromRawValue(int64_t rawValue) const { return std::get<2>(getTypeInfoFromRawValue(rawValue)); }
+	LinSignalEncodingValueType getValueTypeFromRawValue(int64_t rawValue) const { return std::get<2>(getTypeInfoFromRawValue(rawValue)); }
 
 	// Setter
 	void setName(const std::string& name) { this->name = name; }
@@ -44,9 +44,9 @@ public:
 private:
 
 	std::string name;
-	std::vector<std::tuple<std::array<double, 4>, std::string, ValueType> > encodingTypes;
-	std::tuple<std::array<double, 4>, std::string, ValueType> getTypeInfoFromRawValue(int64_t& rawValue) const;
-	std::tuple<std::array<double, 4>, std::string, ValueType> getTypeInfoFromPhysicalValue(double& physicalValue) const;
+	std::vector<std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> > encodingTypes;
+	std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> getTypeInfoFromRawValue(int64_t& rawValue) const;
+	std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> getTypeInfoFromPhysicalValue(double& physicalValue) const;
 
 };
 
