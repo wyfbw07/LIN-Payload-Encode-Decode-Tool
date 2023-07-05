@@ -54,7 +54,7 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
 				unitStream >> std::quoted(unit);
 			}
 			// Store physical value info
-            std::array<double, 4> tmpArray = { (double)min, (double)max, factor, offset };
+			std::array<double, 4> tmpArray = { (double)min, (double)max, factor, offset };
 			sigEncodingType.encodingTypes.push_back(std::make_tuple(tmpArray, unit, LinSignalEncodingValueType::PhysicalValue));
 		}
 		else if (valueTypeName == "logical_value") {
@@ -101,5 +101,5 @@ std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> Signa
 			return encodingTypes[i];
 		}
 	}
-    throw std::invalid_argument("Undefined input value for signal encoding type \"" + name + "\". Encode Failed.");
+	throw std::invalid_argument("Undefined input value for signal encoding type \"" + name + "\". Encode Failed.");
 }

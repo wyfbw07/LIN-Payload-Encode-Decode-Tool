@@ -27,12 +27,12 @@ public:
 	std::string getUnitFromRawValue(int64_t rawValue) const { return std::get<1>(getTypeInfoFromRawValue(rawValue)); }
     double getOffsetFromPhysicalValue(double physicalValue) const { return std::get<0>(getTypeInfoFromPhysicalValue(physicalValue))[3]; }
     double getFactorFromPhysicalValue(double physicalValue) const { return std::get<0>(getTypeInfoFromPhysicalValue(physicalValue))[2]; }
-	int getMaxValueFromPhysicalValue(double physicalValue) const { return std::get<0>(getTypeInfoFromPhysicalValue(physicalValue))[1]; }
-	int getMinValueFromPhysicalValue(double physicalValue) const { return std::get<0>(getTypeInfoFromPhysicalValue(physicalValue))[0]; }
+    double getMaxValueFromPhysicalValue(double physicalValue) const { return std::get<0>(getTypeInfoFromPhysicalValue(physicalValue))[1]; }
+    double getMinValueFromPhysicalValue(double physicalValue) const { return std::get<0>(getTypeInfoFromPhysicalValue(physicalValue))[0]; }
 	double getOffsetFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[3]; }
 	double getFactorFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[2]; }
-	int getMaxValueFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[1]; }
-	int getMinValueFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[0]; }
+    double getMaxValueFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[1]; }
+    double getMinValueFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[0]; }
 	LinSignalEncodingValueType getValueTypeFromRawValue(int64_t rawValue) const { return std::get<2>(getTypeInfoFromRawValue(rawValue)); }
 
 	// Setter

@@ -85,18 +85,18 @@ bool LdfParser::parse(const std::string& filePath) {
 		ldfFile.close();
 		return false;
 	}
-//
-//	// Data Integrity check: all signals should have corresponding encoding type
-//	for (auto signal : signalsLibrary) {
-//		if (signal.second.getEncodingType() == NULL) {
-//			std::cerr << "Signal \"" << signal.second.getName()
-//				<< "\" does not have a corresponding encoding type. Parse Failed." << std::endl;
-//			resetParsedContent();
-//			ldfFile.close();
-//			return false;
-//		}
-//	}
-	// All operations and data integrity check passed, parse success
+	//
+	//	// Data Integrity check: all signals should have corresponding encoding type
+	//	for (auto signal : signalsLibrary) {
+	//		if (signal.second.getEncodingType() == NULL) {
+	//			std::cerr << "Signal \"" << signal.second.getName()
+	//				<< "\" does not have a corresponding encoding type. Parse Failed." << std::endl;
+	//			resetParsedContent();
+	//			ldfFile.close();
+	//			return false;
+	//		}
+	//	}
+		// All operations and data integrity check passed, parse success
 	isEmptyLibrary = false;
 	ldfFile.close();
 	return true;
@@ -310,9 +310,9 @@ int LdfParser::encode(int& frameId,
 			}
 		}
 		if (!validInput) {
-            std::cerr << "Cannot find signal: " << signalsToEncode[i].first
-            << "\" under Frame \"" << data_itr_frm->second.getName() << "\". Encode failed." << std::endl;
-            return -1;
+			std::cerr << "Cannot find signal: " << signalsToEncode[i].first
+				<< "\" under Frame \"" << data_itr_frm->second.getName() << "\". Encode failed." << std::endl;
+			return -1;
 		}
 	}
 	// In LIN, recessive bit is 1. Initialize encoded value with all 1s.
@@ -329,15 +329,15 @@ int LdfParser::encode(int& frameId,
 			}
 		}
 		// If no physical value is provided upon encoding, use the intial value
-        // Then encode this signal
-        uint64_t singleEncodedValue;
+		// Then encode this signal
+		uint64_t singleEncodedValue;
 		if (!hasPhysicalValue) {
 			physicalValue = signalsName[i]->getInitValue();
-            singleEncodedValue = signalsName[i]->encodeSignal(physicalValue, true);
+			singleEncodedValue = signalsName[i]->encodeSignal(physicalValue, true);
 		}
-        else {
-            singleEncodedValue = signalsName[i]->encodeSignal(physicalValue, false);
-        }
+		else {
+			singleEncodedValue = signalsName[i]->encodeSignal(physicalValue, false);
+		}
 		// Add single encoded value to encoded value
 		encodedValue &= singleEncodedValue;
 	}
