@@ -49,6 +49,21 @@ void LdfParser::resetParsedContent() {
 	isEmptySigEncodingTypeLibrary = true;
 }
 
+void LdfParser::consistencyCheck() {
+    // All signals should have corresponding encoding type
+    for (auto signal : signalsLibrary) {
+        if (signal.second.getEncodingType() == NULL) {
+            std::cerr << "<Warning> Signal \"" << signal.second.getName()
+            << "\" does not have a corresponding encoding type." << std::endl;
+        }
+        if (signal.second.getstartBit() == -1) {
+            std::cerr << "<Warning> Signal \"" << signal.second.getName()
+                << "\" is not attached to any frame. " << std::endl;
+        }
+    }
+    
+}
+
 // Load file from path. Parse and store the content
 // A returned bool is used to indicate whether parsing succeeds or not
 bool LdfParser::parse(const std::string& filePath) {
@@ -85,18 +100,8 @@ bool LdfParser::parse(const std::string& filePath) {
 		ldfFile.close();
 		return false;
 	}
-	//
-	//	// Data Integrity check: all signals should have corresponding encoding type
-	//	for (auto signal : signalsLibrary) {
-	//		if (signal.second.getEncodingType() == NULL) {
-	//			std::cerr << "Signal \"" << signal.second.getName()
-	//				<< "\" does not have a corresponding encoding type. Parse Failed." << std::endl;
-	//			resetParsedContent();
-	//			ldfFile.close();
-	//			return false;
-	//		}
-	//	}
-		// All operations and data integrity check passed, parse success
+    consistencyCheck();
+    // All operations and data integrity check passed, parse success
 	isEmptyLibrary = false;
 	ldfFile.close();
 	return true;
@@ -258,20 +263,20 @@ std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType
 	std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType> > results, emptyResult;
 	// Check if parser has info
 	if (isEmptyLibrary) {
-		std::cout << "Parse LDF file first before decoding frames." << std::endl;
+		std::cout << "Decode failed. Parse LDF file first before decoding frames." << std::endl;
 		return emptyResult;
 	}
 	framesLib_iterator data_itr_frm = framesLibrary.find(frameId);
 	// Find the frame that needs to be decoded
 	if (data_itr_frm == framesLibrary.end()) {
-		std::cerr << "No matching frame found. Decode failed. An empty result is returned." << std::endl;
+		std::cerr << "Decode failed. No matching frame found. An empty result is returned." << std::endl;
 		return emptyResult;
 	}
 	else {
 		// Check input payload's dlc
 		if (dlc != data_itr_frm->second.getDlc()) {
-			std::cerr << "The data length of the input payload does not match with LDF info."
-				<< " Decode failed. An empty result is returned." << std::endl;
+			std::cerr << "Decode failed. The data length of the input payload does not match with LDF info."
+				<< " An empty result is returned." << std::endl;
 			return emptyResult;
 		}
 		// Decode each signal under the frame
@@ -289,13 +294,13 @@ int LdfParser::encode(int& frameId,
 	unsigned char encodedPayload[MAX_FRAME_LEN]) {
 	// Check if parser has info
 	if (isEmptyLibrary) {
-		std::cerr << "Parse LDF file first before encoding frames." << std::endl;
+		std::cerr << "Encode failed. Parse LDF file first before encoding frames." << std::endl;
 		return -1;
 	}
 	// Find corresponding frame to encode
 	framesLib_iterator data_itr_frm = framesLibrary.find(frameId);
 	if (data_itr_frm == framesLibrary.end()) {
-		std::cerr << "No matching frame found. Encode failed. An empty result is returned.\n" << std::endl;
+		std::cerr << "Encode failed. No matching frame found. An empty result is returned.\n" << std::endl;
 		return -1;
 	}
 	// Get all signals under the frame
@@ -310,8 +315,8 @@ int LdfParser::encode(int& frameId,
 			}
 		}
 		if (!validInput) {
-			std::cerr << "Cannot find signal: " << signalsToEncode[i].first
-				<< "\" under Frame \"" << data_itr_frm->second.getName() << "\". Encode failed." << std::endl;
+			std::cerr << "Encode failed. Cannot find signal \"" << signalsToEncode[i].first
+				<< "\" under Frame \"" << data_itr_frm->second.getName() << "\"." << std::endl;
 			return -1;
 		}
 	}
@@ -328,9 +333,15 @@ int LdfParser::encode(int& frameId,
 				hasPhysicalValue = true;
 			}
 		}
-		// If no physical value is provided upon encoding, use the intial value
-		// Then encode this signal
-		uint64_t singleEncodedValue;
+		// Make sure the signal has an encoding type
+        if (signalsName[i]->getEncodingType() == NULL) {
+            std::cerr << "Encode failed. Signal \"" <<signalsName[i]->getName()
+                << "\" does not have an signal encoding type. An empty result is returned.\n" << std::endl;
+            return -1;
+        }
+        // If no physical value is provided upon encoding, use the intial value
+        // And then encode this signal
+        uint64_t singleEncodedValue;
 		if (!hasPhysicalValue) {
 			physicalValue = signalsName[i]->getInitValue();
 			singleEncodedValue = signalsName[i]->encodeSignal(physicalValue, true);

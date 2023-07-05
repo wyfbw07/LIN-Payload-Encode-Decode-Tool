@@ -49,6 +49,7 @@ private:
 	std::map<std::string, SignalEncodingType> sigEncodingTypeLibrary{};
 	// Function used to parse LDF file
 	void resetParsedContent();
+    void consistencyCheck();
 	void loadAndParseFromFile(std::istream& in);
 
 };
