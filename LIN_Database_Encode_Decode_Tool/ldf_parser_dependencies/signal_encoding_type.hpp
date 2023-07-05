@@ -34,7 +34,6 @@ public:
     double getMaxValueFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[1]; }
     double getMinValueFromRawValue(int64_t rawValue) const { return std::get<0>(getTypeInfoFromRawValue(rawValue))[0]; }
 	LinSignalEncodingValueType getValueTypeFromRawValue(int64_t rawValue) const { return std::get<2>(getTypeInfoFromRawValue(rawValue)); }
-
 	// Setter
 	void setName(const std::string& name) { this->name = name; }
 	// Overloads

@@ -11,7 +11,6 @@
 #include <stdexcept>
 #include "ldf_parser.hpp"
 
-
 int main()
 {
 	int operationChoice = 2;
@@ -21,7 +20,6 @@ int main()
 		ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.0.ldf");
 //      ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.1.ldf");
 //		ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN_medium.ldf");
-        
 		std::cout << ldfFile;
 		// MARK: - Function call choices
 		switch (operationChoice) {

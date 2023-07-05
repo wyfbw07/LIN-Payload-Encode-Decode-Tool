@@ -25,7 +25,6 @@ namespace utils {
 		str.erase(remove(str.begin(), str.end(), '\n'), str.end());
 		return str;
 	}
-
 	// A custom getline function that trims the word before returning
 	inline std::string getline(std::istream& lineStream, char delimiter) {
 		std::string word;
@@ -33,7 +32,6 @@ namespace utils {
 		trim(word);
 		return word;
 	}
-
 	// Gives the condition name in a string
 	inline std::string lastTokenOf(std::string& str) {
 		// Read the first token from an input string stream constructed with the string in reverse
@@ -50,7 +48,6 @@ namespace utils {
 		// Reverse back the token
 		return { conditionName.rbegin(), conditionName.rend() };
 	}
-
 	// A custom stoi function that detects the input number base
 	inline int stoi(std::string number) {
 		if (number[0] == '0' && number.size() > 1) {
@@ -64,7 +61,6 @@ namespace utils {
 		// Input is DEC
 		return std::stoi(number, 0, 10);
 	}
-
 }
 
 #endif /* ldf_parser_helper_hpp */

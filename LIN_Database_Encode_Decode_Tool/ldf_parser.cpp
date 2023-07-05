@@ -50,7 +50,6 @@ void LdfParser::resetParsedContent() {
 }
 
 void LdfParser::consistencyCheck() {
-    // All signals should have corresponding encoding type
     for (auto signal : signalsLibrary) {
         if (signal.second.getEncodingType() == NULL) {
             std::cerr << "<Warning> Signal \"" << signal.second.getName()
@@ -61,7 +60,6 @@ void LdfParser::consistencyCheck() {
                 << "\" is not attached to any frame. " << std::endl;
         }
     }
-    
 }
 
 // Load file from path. Parse and store the content
