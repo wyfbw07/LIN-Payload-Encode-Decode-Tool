@@ -19,7 +19,7 @@ int main()
 	try {
 		ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.0.ldf");
 //      ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.1.ldf");
-//		ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN_medium.ldf");
+//        ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.2.ldf");
 		std::cout << ldfFile;
 		// MARK: - Function call choices
 		switch (operationChoice) {
@@ -28,7 +28,7 @@ int main()
 			// Decode
 			int dlc = 4;
 			int frameId = 0x20;
-			unsigned char rawPayload[8] = { 0xa0, 0x0, 0x0, 0x08, 0x00, 0x00, 0x00, 0x00 };
+			unsigned char rawPayload[8] = { 0xa0, 0x0, 0x0, 0x08, 0xff, 0xff, 0xff, 0xff };
 			std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType> > result = ldfFile.decode(frameId, rawPayload, dlc);
 			// Print decoded message info
 			std::cout << "-----------------------------------------------" << std::endl;

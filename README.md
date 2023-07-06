@@ -12,13 +12,13 @@ No arguments is required to run. Edit properties in main to use this tool.
 
 ### On Other Operating Systems
 
-You will need to use the source files and create a new project on your own to build. This tool is still under development, and no tests were conducted on Windows machines.
+You will need to use the source files and create a new project on your own to build. This tool has been tested with Visual Studio 17.6.4 on Windows 11 x64.
 
 
 
 ## Error Handling
 
-This tool uses exceptions to eraise errors. As a result, running and calling functions should be wrapped into a try-catch block. If nothing is added to catch potential errors, it could cause program termination.
+This tool uses exceptions to eraise errors. As a result, running and calling functions should be wrapped into a try-catch block. If nothing is added to catch potential errors, it could cause unhandled excepetions thus program termination.
 
 
 

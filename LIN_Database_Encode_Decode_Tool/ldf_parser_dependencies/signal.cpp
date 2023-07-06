@@ -96,7 +96,7 @@ uint64_t Signal::encodeSignal(double valueToEncode, bool isInitialValue) {
 	// Reverse linear conversion rule
 	// to convert the signals physical value into the signal's raw value
 	uint64_t encodedValue = 0; encodedValue = ~encodedValue;
-    double rawValue;
+    uint64_t rawValue;
     if (isInitialValue) {
         rawValue = valueToEncode;
     }
