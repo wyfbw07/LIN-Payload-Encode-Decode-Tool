@@ -1,4 +1,4 @@
-# LIN Description File (LDF) Parse Tool
+# LIN Payload Encode/Decode Tool
 
 
 
