@@ -17,12 +17,12 @@ std::ostream& operator<<(std::ostream& os, const Signal& sig) {
 	std::cout << "\t" << std::left << std::setw(20) << "size: " << sig.signalSize << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "start bit: " << sig.startBit << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "initial value: " << sig.initValue << std::endl;
-    if (sig.encodingType != NULL) {
-        std::cout << "\t" << std::left << std::setw(20) << "Encode type: " << sig.encodingType->getName() << std::endl;
-    }
-    else {
-        std::cout << "\t" << std::left << std::setw(20) << "No Encode type" << std::endl;
-    }
+	if (sig.encodingType != NULL) {
+		std::cout << "\t" << std::left << std::setw(20) << "Encode type: " << sig.encodingType->getName() << std::endl;
+	}
+	else {
+		std::cout << "\t" << std::left << std::setw(20) << "No Encode type" << std::endl;
+	}
 	std::cout << "\t" << std::left << std::setw(20) << "publisher: " << sig.publisher << std::endl;
 	if (sig.subscribers.size() != 0) {
 		std::cout << "\t" << std::left << std::setw(20) << std::to_string(sig.subscribers.size()) + " subscriber(s): ";
@@ -96,17 +96,17 @@ uint64_t Signal::encodeSignal(double valueToEncode, bool isInitialValue) {
 	// Reverse linear conversion rule
 	// to convert the signals physical value into the signal's raw value
 	uint64_t encodedValue = 0; encodedValue = ~encodedValue;
-    uint64_t rawValue;
-    if (isInitialValue) {
-        rawValue = valueToEncode;
-    }
-    else {
-        double offset = encodingType->getOffsetFromPhysicalValue(valueToEncode);
-        double factor = encodingType->getFactorFromPhysicalValue(valueToEncode);
-        rawValue = (uint64_t)(valueToEncode - offset) / factor;
-    }
-    // Encode
-    unsigned int currentBit = 0;
+	uint64_t rawValue;
+	if (isInitialValue) {
+		rawValue = (uint64_t)valueToEncode;
+	}
+	else {
+		double offset = encodingType->getOffsetFromPhysicalValue(valueToEncode);
+		double factor = encodingType->getFactorFromPhysicalValue(valueToEncode);
+		rawValue = (uint64_t)((valueToEncode - offset) / factor);
+	}
+	// Encode
+	unsigned int currentBit = 0;
 	uint8_t* rawPayload = (uint8_t*)&rawValue;
 	for (unsigned short bitpos = 0; bitpos < signalSize; bitpos++) {
 		// Access the corresponding byte and make sure we are reading a dominant bit 0
