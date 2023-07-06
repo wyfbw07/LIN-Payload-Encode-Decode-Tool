@@ -78,8 +78,8 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
 std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> SignalEncodingType::getTypeInfoFromRawValue(int64_t& rawValue) const {
 	if (encodingTypes.size() != 0) {
 		for (size_t i = 0; i < encodingTypes.size(); i++) {
-			int min = std::get<0>(encodingTypes[i])[0];
-			int max = std::get<0>(encodingTypes[i])[1];
+			double min = std::get<0>(encodingTypes[i])[0];
+			double max = std::get<0>(encodingTypes[i])[1];
 			if ((rawValue >= min) && (rawValue <= max)) {
 				return encodingTypes[i];
 			}
@@ -91,8 +91,8 @@ std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> Signa
 }
 
 std::tuple<std::array<double, 4>, std::string, LinSignalEncodingValueType> SignalEncodingType::getTypeInfoFromPhysicalValue(double& physicalValue) const {
-	int minForPhysicalValue;
-	int maxForPhysicalValue;
+	double minForPhysicalValue;
+	double maxForPhysicalValue;
 	for (size_t i = 0; i < encodingTypes.size(); i++) {
 		// min/max * factor + offset
 		minForPhysicalValue = std::get<0>(encodingTypes[i])[0] * std::get<0>(encodingTypes[i])[2] + std::get<0>(encodingTypes[i])[3];
