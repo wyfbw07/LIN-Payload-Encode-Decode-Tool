@@ -6,7 +6,6 @@
 //
 
 #include <limits>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include "signal_encoding_type.hpp"
@@ -42,6 +41,7 @@ std::istream& operator>>(std::istream& in, SignalEncodingType& sigEncodingType) 
 	while (singleValueType != "") {
 		std::stringstream singleValueTypeStream(singleValueType);
 		std::string valueTypeName = utils::getline(singleValueTypeStream, ',');
+        // TODO: Check for byte array signals
 		if (valueTypeName == "physical_value") {
 			int min = utils::stoi(utils::getline(singleValueTypeStream, ','));
 			int max = utils::stoi(utils::getline(singleValueTypeStream, ','));

@@ -10,6 +10,7 @@
 
 #include <map>
 #include <string>
+#include <optional>
 #include "ldf_parser_dependencies/frame.hpp"
 #include "ldf_parser_dependencies/signal.hpp"
 #include "ldf_parser_dependencies/signal_encoding_type.hpp"
@@ -34,6 +35,7 @@ public:
 
 private:
 
+    std::optional<std::string> LinProtocolVersion;
 	typedef std::map<int, Frame>::iterator framesLib_iterator;
 	typedef std::map<std::string, Signal>::iterator signalsLib_iterator;
 	typedef std::map<std::string, SignalEncodingType>::iterator sigEncodingTypeLib_iterator;

@@ -41,7 +41,9 @@ std::istream& operator>>(std::istream& in, Signal& sig) {
 	// Parse signal info
 	std::string sigName = utils::getline(in, ':');
 	int sigSize = utils::stoi(utils::getline(in, ','));
-	int initValue = utils::stoi(utils::getline(in, ','));
+    // TODO: Check for byte array signals
+    std::string rawString = utils::getline(in, ',');
+	int initValue = utils::stoi(rawString);
 	std::string publisher = utils::getline(in, ',');
 	std::string subscriber = utils::getline(in, ',');
 	std::vector<std::string> subscribers;
