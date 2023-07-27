@@ -4,6 +4,7 @@
 //
 //  Created by Yifan Wang on 6/14/23.
 //
+
 #include <bitset>
 #include <iomanip>
 #include <iostream>
