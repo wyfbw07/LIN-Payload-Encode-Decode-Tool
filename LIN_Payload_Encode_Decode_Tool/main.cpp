@@ -5,33 +5,28 @@
 //  Created by Yifan Wang on 6/14/23.
 //
 
-#include <ctime>
-
-#include <bitset>
 #include <iomanip>
 #include <iostream>
-#include <stdexcept>
 #include "ldf_parser.hpp"
 
 int main()
 {
-    // timing mechanism
-    clock_t before_operation, after_operation;
-    
+	// timing mechanism
+	clock_t before_operation, after_operation;
+
 	int operationChoice = 0;
 	// Create a class to store LDF info
 	LdfParser ldfFile;
-    
-    // mark the time before we start
-    before_operation = clock();
+
+	// mark the time before we start
+	before_operation = clock();
 	try {
-		ldfFile.parse("C:\\Users\\Yifan\\Desktop\\Local\\VolvoCars\\Tests\\Test-Database\\exampleLIN2.0.ldf");
-		// ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.0.ldf");
+		 ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.0.ldf");
 		// ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.1.ldf");
 		// ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.2.ldf");
 		std::cout << ldfFile;
-        // mark the time once we are done
-        after_operation = clock();
+		// mark the time once we are done
+		after_operation = clock();
 		// MARK: - Function call choices
 		switch (operationChoice) {
 		case 1:
@@ -40,7 +35,7 @@ int main()
 			int dlc = 4;
 			int frameId = 0x20;
 			unsigned char rawPayload[8] = { 0xa0, 0x0, 0x0, 0x08, 0xff, 0xff, 0xff, 0xff };
-			std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType> > result = ldfFile.decode(frameId, rawPayload, dlc);
+			std::map<std::string, std::tuple<double, std::string, LinSigEncodingValueType> > result = ldfFile.decode(frameId, rawPayload, dlc);
 			// Print decoded message info
 			std::cout << "-----------------------------------------------" << std::endl;
 			std::cout << "Decoded signal values: \n";
@@ -95,10 +90,10 @@ int main()
 		std::cout << "[Exception catched] " << err.what() << '\n';
 		return -1;
 	}
-    
-    // print statistics
-    double operation_time = double(after_operation-before_operation)/CLOCKS_PER_SEC;
-    std::cerr << "operation time:     " << operation_time << std::endl;
+
+	// print statistics
+	double operation_time = double(after_operation - before_operation) / CLOCKS_PER_SEC;
+	std::cerr << "Operation time:     " << operation_time << std::endl;
 	std::cout << "----------------------END----------------------" << std::endl;
 	return 0;
 }

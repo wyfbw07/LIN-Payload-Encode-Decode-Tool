@@ -34,8 +34,9 @@ public:
 	void setEncodingType(SignalEncodingType* encodingType) { this->encodingType = encodingType; }
 	void setSubscribers(const std::vector<std::string>& subscribers) { this->subscribers = subscribers; }
 	// Decode/Encode
-	std::tuple<double, std::string, LinSignalEncodingValueType> decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN]);
 	uint64_t encodeSignal(double valueToEncode, bool isInitialValue);
+	std::tuple<double, std::string, LinSigEncodingValueType>
+		decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN]);
 	// Operator overload, allows parsing of signals info
 	friend std::istream& operator>>(std::istream& in, Signal& sig);
 	friend std::ostream& operator<<(std::ostream& os, const Signal& sig);

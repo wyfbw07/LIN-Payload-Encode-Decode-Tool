@@ -18,22 +18,37 @@ std::ostream& operator<<(std::ostream& os, const Signal& sig) {
 	std::cout << "\t" << std::left << std::setw(20) << "start bit: " << sig.startBit << std::endl;
 	std::cout << "\t" << std::left << std::setw(20) << "initial value: " << sig.initValue << std::endl;
 	if (sig.encodingType != NULL) {
-		std::cout << "\t" << std::left << std::setw(20) << "Encode type: " << sig.encodingType->getName() << std::endl;
+		std::cout << "\t"
+			<< std::left
+			<< std::setw(20)
+			<< "Encode type: "
+			<< sig.encodingType->getName()
+			<< std::endl;
 	}
 	else {
-		std::cout << "\t" << std::left << std::setw(20) << "No Encode type" << std::endl;
+		std::cout << "\t"
+			<< std::left
+			<< std::setw(20)
+			<< "No Encode type"
+			<< std::endl;
 	}
-	std::cout << "\t" << std::left << std::setw(20) << "publisher: " << sig.publisher << std::endl;
+	std::cout << "\t"
+		<< std::left
+		<< std::setw(20)
+		<< "publisher: "
+		<< sig.publisher
+		<< std::endl;
 	if (sig.subscribers.size() != 0) {
-		std::cout << "\t" << std::left << std::setw(20) << std::to_string(sig.subscribers.size()) + " subscriber(s): ";
+		std::cout << "\t"
+			<< std::left
+			<< std::setw(20)
+			<< std::to_string(sig.subscribers.size()) + " subscriber(s): ";
 		for (size_t i = 0; i < sig.subscribers.size(); i++) {
 			std::cout << sig.subscribers[i] << ' ';
 		}
 		std::cout << std::endl;
 	}
-	else {
-		std::cout << "\tNo subscribers" << std::endl;
-	}
+	else { std::cout << "\tNo subscribers" << std::endl; }
 	return os;
 }
 
@@ -41,8 +56,12 @@ std::istream& operator>>(std::istream& in, Signal& sig) {
 	// Parse signal info
 	std::string sigName = utils::getline(in, ':');
 	int sigSize = utils::stoi(utils::getline(in, ','));
-    // TODO: Check for byte array signals
-    std::string rawString = utils::getline(in, ',');
+	// Read initial value and check for byte array signals
+	std::string rawString = utils::getline(in, ',');
+	char lastCharOnInitValue = rawString.front();
+	if (lastCharOnInitValue == '{') {
+		throw std::invalid_argument("Parse Failed. Parser does not support parsing byte-array signals");
+	}
 	int initValue = utils::stoi(rawString);
 	std::string publisher = utils::getline(in, ',');
 	std::string subscriber = utils::getline(in, ',');
@@ -67,7 +86,8 @@ std::istream& operator>>(std::istream& in, Signal& sig) {
 	return in;
 }
 
-std::tuple<double, std::string, LinSignalEncodingValueType> Signal::decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN]) {
+std::tuple<double, std::string, LinSigEncodingValueType>
+Signal::decodeSignal(unsigned char rawPayload[MAX_FRAME_LEN]) {
 	// Change endianness
 	int64_t payload = 0;
 	for (int i = MAX_FRAME_LEN; i > 0; i--) {
@@ -86,7 +106,7 @@ std::tuple<double, std::string, LinSignalEncodingValueType> Signal::decodeSignal
 		currentBit++;
 	}
 	// Apply linear transformation
-	LinSignalEncodingValueType sigValueType = encodingType->getValueTypeFromRawValue(decodedRawValue);
+	LinSigEncodingValueType sigValueType = encodingType->getValueTypeFromRawValue(decodedRawValue);
 	std::string unit = encodingType->getUnitFromRawValue(decodedRawValue);
 	double factor = encodingType->getFactorFromRawValue(decodedRawValue);
 	double offset = encodingType->getOffsetFromRawValue(decodedRawValue);

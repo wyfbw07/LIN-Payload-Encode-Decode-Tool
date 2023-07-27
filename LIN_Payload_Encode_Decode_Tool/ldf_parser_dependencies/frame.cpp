@@ -21,13 +21,19 @@ std::ostream& operator<<(std::ostream& os, const Frame& frm) {
 			if (i == 0) {
 				std::cout << "\t" << std::left << std::setw(20)
 					<< "signals(start bit): "
-					<< frm.connectedSignals[i]->getName() << " ("
-					<< frm.connectedSignals[i]->getstartBit() << ") " << std::endl;
+					<< frm.connectedSignals[i]->getName()
+					<< " ("
+					<< frm.connectedSignals[i]->getstartBit()
+					<< ") "
+					<< std::endl;
 			}
 			else {
 				std::cout << "\t" << std::left << std::setw(20) << ""
-					<< frm.connectedSignals[i]->getName() << " ("
-					<< frm.connectedSignals[i]->getstartBit() << ") " << std::endl;
+					<< frm.connectedSignals[i]->getName()
+					<< " ("
+					<< frm.connectedSignals[i]->getstartBit()
+					<< ") "
+					<< std::endl;
 			}
 		}
 	}

@@ -23,11 +23,13 @@ public:
 	// A bool is used to indicate whether parsing succeeds or not
 	bool parse(const std::string& filePath);
 	// Encode
-	int encode(int& frameId,
+	int encode(
+		int& frameId,
 		std::vector<std::pair<std::string, double> > signalsToEncode,
 		unsigned char encodedPayload[MAX_FRAME_LEN]);
 	// Decode
-	std::map<std::string, std::tuple<double, std::string, LinSignalEncodingValueType> > decode(int& frameId,
+	std::map<std::string, std::tuple<double, std::string, LinSigEncodingValueType> > decode(
+		int& frameId,
 		unsigned char payLoad[MAX_FRAME_LEN],
 		int& dlc);
 	// Print LDF info
@@ -35,10 +37,10 @@ public:
 
 private:
 
-    std::optional<std::string> LinProtocolVersion;
-	typedef std::map<int, Frame>::iterator framesLib_iterator;
-	typedef std::map<std::string, Signal>::iterator signalsLib_iterator;
-	typedef std::map<std::string, SignalEncodingType>::iterator sigEncodingTypeLib_iterator;
+	std::optional<std::string> LinProtocolVersion;
+	typedef std::map<int, Frame>::iterator framesLib_itr;
+	typedef std::map<std::string, Signal>::iterator signalsLib_itr;
+	typedef std::map<std::string, SignalEncodingType>::iterator sigEncodingTypeLib_itr;
 	bool isEmptyLibrary = true;
 	bool isEmptyFramesLibrary = true;
 	bool isEmptySignalsLibrary = true;
@@ -51,7 +53,7 @@ private:
 	std::map<std::string, SignalEncodingType> sigEncodingTypeLibrary{};
 	// Function used to parse LDF file
 	void resetParsedContent();
-    void consistencyCheck();
+	void consistencyCheck();
 	void loadAndParseFromFile(std::istream& in);
 
 };
