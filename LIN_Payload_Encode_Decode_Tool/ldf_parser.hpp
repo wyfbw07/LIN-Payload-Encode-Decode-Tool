@@ -24,14 +24,16 @@ public:
 	bool parse(const std::string& filePath);
 	// Encode
 	int encode(
-		int& frameId,
+		int const frameId,
 		std::vector<std::pair<std::string, double> > signalsToEncode,
-		unsigned char encodedPayload[MAX_FRAME_LEN]);
+		unsigned char encodedPayload[MAX_FRAME_LEN]
+	);
 	// Decode
 	std::map<std::string, std::tuple<double, std::string, LinSigEncodingValueType> > decode(
-		int& frameId,
-		unsigned char payLoad[MAX_FRAME_LEN],
-		int& dlc);
+		int const frameId,
+		int const msgSize,
+		unsigned char payLoad[MAX_FRAME_LEN]
+	);
 	// Print LDF info
 	friend std::ostream& operator<<(std::ostream& os, const LdfParser& ldfFile);
 

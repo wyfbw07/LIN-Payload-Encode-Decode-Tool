@@ -309,9 +309,9 @@ void LdfParser::loadAndParseFromFile(std::istream& in) {
 
 std::map<std::string, std::tuple<double, std::string, LinSigEncodingValueType> >
 LdfParser::decode(
-	int& frameId,
-	unsigned char payLoad[MAX_FRAME_LEN],
-	int& dlc) {
+	int frameId,
+	int const msgSize,
+	unsigned char payLoad[MAX_FRAME_LEN]) {
 	std::map<std::string, std::tuple<double, std::string, LinSigEncodingValueType> > results, emptyResult;
 	// Check if parser has info
 	if (isEmptyLibrary) {
@@ -331,7 +331,7 @@ LdfParser::decode(
 	}
 	else {
 		// Check input payload's dlc
-		if (dlc != data_itr_frm->second.getDlc()) {
+		if (msgSize != data_itr_frm->second.getDlc()) {
 			std::cerr << "Decode failed. "
 				<< "The data length of the input payload does not match with LDF info. "
 				<< "An empty result is returned."
@@ -350,7 +350,7 @@ LdfParser::decode(
 }
 
 int LdfParser::encode(
-	int& frameId,
+	int const frameId,
 	std::vector<std::pair<std::string, double> > signalsToEncode,
 	unsigned char encodedPayload[MAX_FRAME_LEN]) {
 	// Check if parser has info

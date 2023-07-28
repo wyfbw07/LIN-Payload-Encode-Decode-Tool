@@ -15,7 +15,7 @@ int main()
 	// timing mechanism
 	clock_t before_operation, after_operation;
 
-	int operationChoice = 0;
+	int operationChoice = 2;
 	// Create a class to store LDF info
 	LdfParser ldfFile;
 
@@ -33,10 +33,11 @@ int main()
 		case 1:
 		{
 			// Decode
-			int dlc = 4;
+			int msgSize = 4;
 			int frameId = 0x20;
 			unsigned char rawPayload[8] = { 0xa0, 0x0, 0x0, 0x08, 0xff, 0xff, 0xff, 0xff };
-			std::map<std::string, std::tuple<double, std::string, LinSigEncodingValueType> > result = ldfFile.decode(frameId, rawPayload, dlc);
+			std::map<std::string, std::tuple<double, std::string, LinSigEncodingValueType> > result;
+			result = ldfFile.decode(frameId, msgSize, rawPayload);
 			// Print decoded message info
 			std::cout << "-----------------------------------------------" << std::endl;
 			std::cout << "Decoded signal values: \n";
@@ -56,7 +57,7 @@ int main()
 		{
 			// Encode test case
 			int frameId = 0x20;
-			int encodedDlc = 4;
+			int encodedfrmSize = 4;
 			unsigned char encodedPayload[8];
 			std::vector<std::pair<std::string, double> > signalsToEncode;
 			signalsToEncode.push_back(std::make_pair("Reg_Set_Voltage", 14.6));
@@ -66,11 +67,11 @@ int main()
 			signalsToEncode.push_back(std::make_pair("Derat_Shift", 0));
 			signalsToEncode.push_back(std::make_pair("MM_Request", 1));
 			signalsToEncode.push_back(std::make_pair("Reg_Blind", 0));
-			encodedDlc = ldfFile.encode(frameId, signalsToEncode, encodedPayload);
+			encodedfrmSize = ldfFile.encode(frameId, signalsToEncode, encodedPayload);
 			// Print results
-			if (encodedDlc != -1) {
+			if (encodedfrmSize != -1) {
 				std::cout << "-----------------------------------------------" << std::endl;
-				std::cout << "Encoded frame size: " << encodedDlc << '\n';
+				std::cout << "Encoded frame size: " << encodedfrmSize << '\n';
 				std::cout << "Display encoded payload as array (leftmost is [0]): ";
 				for (short i = 0; i < 8; i++) {
 					printf("%x ", encodedPayload[i]);
