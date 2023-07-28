@@ -40,11 +40,6 @@ This tool uses exceptions to eraise errors. As a result, running and calling fun
 bool LdfParser::parse(const std::string& filePath);
 ```
 
-| About this function | Description                                                  |
-| :------------------ | :----------------------------------------------------------- |
-| Use case            | To load and parse a LDF file, given the file path in string  |
-| Return values       | A bool to indicate whether parsing succeeds (true) or not (false) |
-
 #### Use Case
 
 To load and parse a LDF file, given the file path in string
@@ -104,11 +99,6 @@ For signal encoding type classes, these information will be parsed:
 ```c++
 friend std::ostream& operator<<(std::ostream& os, const LdfParser& ldfFile);
 ```
-
-| About this function | Description                                  |
-| :------------------ | :------------------------------------------- |
-| Use case            | To display all info in the LIN database File |
-| Return values       | std::cout in terminal                        |
 
 #### Use Case
 
