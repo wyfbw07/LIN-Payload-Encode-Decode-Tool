@@ -57,7 +57,6 @@ int main()
 		{
 			// Encode test case
 			int frameId = 0x20;
-			int encodedfrmSize = 4;
 			unsigned char encodedPayload[8];
 			std::vector<std::pair<std::string, double> > signalsToEncode;
 			signalsToEncode.push_back(std::make_pair("Reg_Set_Voltage", 14.6));
@@ -67,7 +66,7 @@ int main()
 			signalsToEncode.push_back(std::make_pair("Derat_Shift", 0));
 			signalsToEncode.push_back(std::make_pair("MM_Request", 1));
 			signalsToEncode.push_back(std::make_pair("Reg_Blind", 0));
-			encodedfrmSize = ldfFile.encode(frameId, signalsToEncode, encodedPayload);
+            int encodedfrmSize = ldfFile.encode(frameId, signalsToEncode, encodedPayload);
 			// Print results
 			if (encodedfrmSize != -1) {
 				std::cout << "-----------------------------------------------" << std::endl;

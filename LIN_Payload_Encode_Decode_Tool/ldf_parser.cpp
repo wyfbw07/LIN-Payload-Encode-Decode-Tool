@@ -351,7 +351,7 @@ LdfParser::decode(
 
 int LdfParser::encode(
 	int const frameId,
-	std::vector<std::pair<std::string, double> > signalsToEncode,
+	std::vector<std::pair<std::string, double> >& signalsToEncode,
 	unsigned char encodedPayload[MAX_FRAME_LEN]) {
 	// Check if parser has info
 	if (isEmptyLibrary) {
