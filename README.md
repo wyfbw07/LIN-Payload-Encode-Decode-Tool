@@ -235,4 +235,17 @@ Reference PDF for LIN bus [LIN Specification Package Revision 2.1](https://lin-c
 
 ## What's New
 
-- None at this time.
+- Added LDF examples
+- Small adjustments in calculating operating time.
+
+
+
+## Known Issues
+
+- The parser does not currently support parsing LDF with comments. Try removing comments as a workaround.
+
+
+
+## Upcoming Updates
+
+- Allow parsing LDF that contains comments.

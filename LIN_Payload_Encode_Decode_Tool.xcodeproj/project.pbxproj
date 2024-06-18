@@ -38,6 +38,22 @@
 		D307DCCE2A39626E00F83B36 /* signal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = signal.cpp; sourceTree = "<group>"; };
 		D307DCCF2A39626E00F83B36 /* signal.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = signal.hpp; sourceTree = "<group>"; };
 		D370F7802A419B4A003F21BE /* ldf_parser_helper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ldf_parser_helper.hpp; sourceTree = "<group>"; };
+		D3774BA72C2130B900210C26 /* exampleLIN_2.0_Large.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.0_Large.ldf; sourceTree = "<group>"; };
+		D3774BA82C2130F100210C26 /* exampleLIN_J2602_1.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_J2602_1.ldf; sourceTree = "<group>"; };
+		D3774BA92C2130F100210C26 /* exampleLIN_1.3.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_1.3.ldf; sourceTree = "<group>"; };
+		D3774BAA2C2130F100210C26 /* exampleLIN_2.0_small.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.0_small.ldf; sourceTree = "<group>"; };
+		D3774BAB2C2130F100210C26 /* exampleLIN_2.2_Medium_3.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.2_Medium_3.ldf; sourceTree = "<group>"; };
+		D3774BAC2C2130F100210C26 /* exampleLIN_2.1_Large.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.1_Large.ldf; sourceTree = "<group>"; };
+		D3774BAD2C2130F100210C26 /* exampleLIN_2.1_No_Signal_Encoding_Types.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.1_No_Signal_Encoding_Types.ldf; sourceTree = "<group>"; };
+		D3774BAE2C2130F100210C26 /* exampleLIN_J2602_1_No_Values.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_J2602_1_No_Values.ldf; sourceTree = "<group>"; };
+		D3774BAF2C2130F100210C26 /* exampleLIN_2.2_No_Signal_Subscribers.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.2_No_Signal_Subscribers.ldf; sourceTree = "<group>"; };
+		D3774BB02C2130F100210C26 /* exampleLIN_2.0_Large.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.0_Large.ldf; sourceTree = "<group>"; };
+		D3774BB12C2130F100210C26 /* exampleLIN_Iso17987.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_Iso17987.ldf; sourceTree = "<group>"; };
+		D3774BB22C2130F100210C26 /* exampleLIN_2.2_Medium.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.2_Medium.ldf; sourceTree = "<group>"; };
+		D3774BB32C2130F100210C26 /* exampleLIN_2.1_medium.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.1_medium.ldf; sourceTree = "<group>"; };
+		D3774BB42C2130F100210C26 /* exampleLIN_2.2_Sporadic_Frames.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.2_Sporadic_Frames.ldf; sourceTree = "<group>"; };
+		D3774BB52C2130F100210C26 /* exampleLIN_2.2_Medium_2.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.2_Medium_2.ldf; sourceTree = "<group>"; };
+		D3774BB62C2130F100210C26 /* exampleLIN_2.2_Byte_Array_Signals.ldf */ = {isa = PBXFileReference; lastKnownFileType = text; path = exampleLIN_2.2_Byte_Array_Signals.ldf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +86,7 @@
 		D307DCB12A39507E00F83B36 /* LIN_Payload_Encode_Decode_Tool */ = {
 			isa = PBXGroup;
 			children = (
+				D3774BA62C21301200210C26 /* sample_ldf */,
 				D307DCB22A39507E00F83B36 /* main.cpp */,
 				D307DCBA2A39561E00F83B36 /* ldf_parser.cpp */,
 				D307DCBB2A39561E00F83B36 /* ldf_parser.hpp */,
@@ -90,6 +107,29 @@
 				D307DCCF2A39626E00F83B36 /* signal.hpp */,
 			);
 			path = ldf_parser_dependencies;
+			sourceTree = "<group>";
+		};
+		D3774BA62C21301200210C26 /* sample_ldf */ = {
+			isa = PBXGroup;
+			children = (
+				D3774BA92C2130F100210C26 /* exampleLIN_1.3.ldf */,
+				D3774BB02C2130F100210C26 /* exampleLIN_2.0_Large.ldf */,
+				D3774BAA2C2130F100210C26 /* exampleLIN_2.0_small.ldf */,
+				D3774BAC2C2130F100210C26 /* exampleLIN_2.1_Large.ldf */,
+				D3774BB32C2130F100210C26 /* exampleLIN_2.1_medium.ldf */,
+				D3774BAD2C2130F100210C26 /* exampleLIN_2.1_No_Signal_Encoding_Types.ldf */,
+				D3774BB62C2130F100210C26 /* exampleLIN_2.2_Byte_Array_Signals.ldf */,
+				D3774BB52C2130F100210C26 /* exampleLIN_2.2_Medium_2.ldf */,
+				D3774BAB2C2130F100210C26 /* exampleLIN_2.2_Medium_3.ldf */,
+				D3774BB22C2130F100210C26 /* exampleLIN_2.2_Medium.ldf */,
+				D3774BAF2C2130F100210C26 /* exampleLIN_2.2_No_Signal_Subscribers.ldf */,
+				D3774BB42C2130F100210C26 /* exampleLIN_2.2_Sporadic_Frames.ldf */,
+				D3774BB12C2130F100210C26 /* exampleLIN_Iso17987.ldf */,
+				D3774BAE2C2130F100210C26 /* exampleLIN_J2602_1_No_Values.ldf */,
+				D3774BA82C2130F100210C26 /* exampleLIN_J2602_1.ldf */,
+				D3774BA72C2130B900210C26 /* exampleLIN_2.0_Large.ldf */,
+			);
+			path = sample_ldf;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -119,7 +159,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					D307DCAE2A39507E00F83B36 = {
 						CreatedOnToolsVersion = 15.0;
@@ -194,6 +234,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -255,6 +296,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -279,6 +321,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 8XK8TA2ZYG;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -289,6 +332,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 8XK8TA2ZYG;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

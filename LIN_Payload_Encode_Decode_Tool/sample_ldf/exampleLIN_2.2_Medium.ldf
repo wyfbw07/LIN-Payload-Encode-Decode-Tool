@@ -1,0 +1,145 @@
+
+
+LIN_description_file;
+LIN_protocol_version = "2.2";
+LIN_language_version = "2.2";
+LIN_speed = 19.2 kbps;
+
+Nodes {
+  Master: Gateway, 1 ms, 0 ms ;
+  Slaves: SCMM ;
+}
+
+Signals {
+  Seat_up: 1, 0, Gateway, SCMM ;
+  Seat_down: 1, 0, Gateway, SCMM ;
+  Seat_forward: 1, 0, Gateway, SCMM ;
+  Seat_back: 1, 0, Gateway, SCMM ;
+  Seatback_forward: 1, 0, Gateway, SCMM ;
+  Seatback_back: 1, 0, Gateway, SCMM ;
+  Head_up: 1, 0, Gateway, SCMM ;
+  Head_down: 1, 0, Gateway, SCMM ;
+  DriverID: 8, 0, Gateway, SCMM ;
+  Vertical_Position: 4, 5, SCMM, Gateway ;
+  Horizontal_Position: 4, 9, SCMM, Gateway ;
+  Head_Position: 3, 2, SCMM, Gateway ;
+  SeatBack_Position: 4, 2, SCMM, Gateway ;
+  Lock_Status: 8, 0, Gateway ;
+}
+
+Diagnostic_signals {
+  MasterReqB0: 8, 0 ;
+  MasterReqB1: 8, 0 ;
+  MasterReqB2: 8, 0 ;
+  MasterReqB3: 8, 0 ;
+  MasterReqB4: 8, 0 ;
+  MasterReqB5: 8, 0 ;
+  MasterReqB6: 8, 0 ;
+  MasterReqB7: 8, 0 ;
+  SlaveRespB0: 8, 0 ;
+  SlaveRespB1: 8, 0 ;
+  SlaveRespB2: 8, 0 ;
+  SlaveRespB3: 8, 0 ;
+  SlaveRespB4: 8, 0 ;
+  SlaveRespB5: 8, 0 ;
+  SlaveRespB6: 8, 0 ;
+  SlaveRespB7: 8, 0 ;
+}
+
+
+
+Frames {
+  Seat_Setting: 0, Gateway, 1 {
+    Seat_up, 0 ;
+    Seat_down, 1 ;
+    Seat_forward, 2 ;
+    Seat_back, 3 ;
+    Seatback_forward, 4 ;
+    Seatback_back, 5 ;
+    Head_up, 6 ;
+    Head_down, 7 ;
+  }
+  Driver_Info: 1, Gateway, 1 {
+    DriverID, 0 ;
+  }
+  Seat_Position: 2, SCMM, 2 {
+    Vertical_Position, 0 ;
+    Horizontal_Position, 4 ;
+    Head_Position, 8 ;
+    SeatBack_Position, 11 ;
+  }
+}
+
+
+
+Diagnostic_frames {
+  MasterReq: 0x3c {
+    MasterReqB0, 0 ;
+    MasterReqB1, 8 ;
+    MasterReqB2, 16 ;
+    MasterReqB3, 24 ;
+    MasterReqB4, 32 ;
+    MasterReqB5, 40 ;
+    MasterReqB6, 48 ;
+    MasterReqB7, 56 ;
+  }
+  SlaveResp: 0x3d {
+    SlaveRespB0, 0 ;
+    SlaveRespB1, 8 ;
+    SlaveRespB2, 16 ;
+    SlaveRespB3, 24 ;
+    SlaveRespB4, 32 ;
+    SlaveRespB5, 40 ;
+    SlaveRespB6, 48 ;
+    SlaveRespB7, 56 ;
+  }
+}
+
+Node_attributes {
+  SCMM{
+    LIN_protocol = "2.2" ;
+    configured_NAD = 0x1 ;
+    initial_NAD = 0x1 ;
+    product_id = 0x17, 0x1, 1 ;
+    P2_min = 50 ms ;
+    ST_min = 0 ms ;
+    N_As_timeout = 1000 ms ;
+    N_Cr_timeout = 1000 ms ;
+    configurable_frames {
+      Driver_Info ;
+      Seat_Setting ;
+      Seat_Position ;
+    }
+  }
+}
+
+Schedule_tables {
+ Table_0 {
+    Seat_Setting delay 30 ms ;
+    Driver_Info delay 30 ms ;
+    Seat_Position delay 30 ms ;
+  }
+}
+
+
+Signal_encoding_types {
+  Driver_Info_Encoding {
+    physical_value, 0, 1, 1, 0 ;
+  }
+  Lock_Status_Encoding {
+    physical_value, 0, 1, 1, 0 ;
+  }
+  Seat_Encoding {
+    physical_value, 0, 1, 1, 0 ;
+  }
+  Seat_Position_Encoding {
+    physical_value, 0, 10, 1, 0 ;
+  }
+}
+
+Signal_representation {
+  Driver_Info_Encoding: DriverID ;
+  Lock_Status_Encoding: Lock_Status ;
+  Seat_Encoding: Seat_up, Seat_down, Seat_forward, Seat_back, Seatback_forward, Seatback_back, Head_up, Head_down ;
+  Seat_Position_Encoding: Vertical_Position, Horizontal_Position, Head_Position, SeatBack_Position ;
+}

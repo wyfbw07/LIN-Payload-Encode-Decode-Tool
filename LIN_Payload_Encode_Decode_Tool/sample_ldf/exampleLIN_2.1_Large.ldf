@@ -1,0 +1,204 @@
+
+
+LIN_description_file;
+LIN_protocol_version = "2.1";
+LIN_language_version = "2.1";
+LIN_speed = 19.2 kbps;
+
+Nodes {
+  Master: Zentral_STG, 5 ms, 1 ms ;
+  Slaves: WDA ;
+}
+Signals {
+    W_CMD:3,0x0,Zentral_STG,WDA;
+    W_SPEED:4,0x0,Zentral_STG,WDA;
+    W_ANGLE:1,0x0,Zentral_STG,WDA;
+    W_INT_TIME:2,0x0,Zentral_STG,WDA;
+    W_MSG_CNT_00:2,0x0,Zentral_STG,WDA;
+    W_STATE:3,0x0,WDA,Zentral_STG;
+    W_POS:9,0x00,WDA,Zentral_STG;
+    W_FAILURE:8,0x00,WDA,Zentral_STG;
+    RESPONSE_ERROR_WDA:1,0x0,WDA,Zentral_STG;
+    W_FREE:4,0x0,Zentral_STG,WDA;
+    W_POS_SLV: 9, 0, WDA, Zentral_STG ;
+    W_MSG_CNT_01:2,0x0,Zentral_STG,WDA;
+    WORD_1:16,0x00,Zentral_STG,WDA;
+    WORD_2:16,0x00,Zentral_STG,WDA;
+    WORD_3:16,0x00,Zentral_STG,WDA;
+    WORD_4:14,0x00,Zentral_STG,WDA;
+    WORD_5:16,0x00,Zentral_STG,WDA;
+    WORD_6:16,0x00,Zentral_STG,WDA;
+    WORD_7:16,0x00,Zentral_STG,WDA;
+    
+}
+Diagnostic_signals {
+    MasterReqB0:8,0;
+    MasterReqB1:8,0;
+    MasterReqB2:8,0;
+    MasterReqB3:8,0;
+    MasterReqB4:8,0;
+    MasterReqB5:8,0;
+    MasterReqB6:8,0;
+    MasterReqB7:8,0;
+    SlaveRespB0:8,0;
+    SlaveRespB1:8,0;
+    SlaveRespB2:8,0;
+    SlaveRespB3:8,0;
+    SlaveRespB4:8,0;
+    SlaveRespB5:8,0;
+    SlaveRespB6:8,0;
+    SlaveRespB7:8,0;
+}
+Frames {
+    Zentral_STG_FrP00:0x10,Zentral_STG,8{
+        W_CMD,0;
+		W_SPEED,3;
+		W_ANGLE,7;
+        W_INT_TIME,8;
+        W_MSG_CNT_00,10;
+        W_FREE,12;
+        WORD_1,16;
+		WORD_2,32;
+        WORD_3,48;
+    }
+    WDA_FrP00:0x12,WDA, 6 {
+        W_STATE,0;
+        RESPONSE_ERROR_WDA,3;
+        W_POS,8;
+        W_FAILURE,24;
+        W_POS_SLV, 32 ;
+    }
+    Zentral_STG_FrP01:0x11,Zentral_STG,8{
+        W_MSG_CNT_01,0;
+        WORD_4,2;
+        WORD_5,16;
+        WORD_6,32;
+		WORD_7,48;
+    }
+}
+Diagnostic_frames {
+  MasterReq: 0x3c {
+    MasterReqB0, 0 ;
+    MasterReqB1, 8 ;
+    MasterReqB2, 16 ;
+    MasterReqB3, 24 ;
+    MasterReqB4, 32 ;
+    MasterReqB5, 40 ;
+    MasterReqB6, 48 ;
+    MasterReqB7, 56 ;
+  }
+  SlaveResp: 0x3d {
+    SlaveRespB0, 0 ;
+    SlaveRespB1, 8 ;
+    SlaveRespB2, 16 ;
+    SlaveRespB3, 24 ;
+    SlaveRespB4, 32 ;
+    SlaveRespB5, 40 ;
+    SlaveRespB6, 48 ;
+    SlaveRespB7, 56 ;
+  }
+}
+
+Node_attributes {
+  WDA{
+    LIN_protocol = "2.1" ;
+    configured_NAD = 0x40 ;
+    initial_NAD = 0x32 ;
+    product_id = 0x40, 0xEF16, 1 ;
+    response_error = RESPONSE_ERROR_WDA ;
+    fault_state_signals = W_FAILURE ;
+    P2_min = 50 ms ;
+    ST_min = 20 ms ;
+    N_As_timeout = 1000 ms ;
+    N_Cr_timeout = 1000 ms ;
+    configurable_frames {
+      Zentral_STG_FrP00 ;
+      Zentral_STG_FrP01 ;
+      WDA_FrP00 ;
+    }
+  }
+}
+
+Schedule_tables {
+    Functional {
+        Zentral_STG_FrP00 delay 20.0000 ms ;
+        Zentral_STG_FrP01 delay 20.0000 ms ;
+        WDA_FrP00 delay 20.0000 ms ;
+    }
+    Param_Startup {
+        SlaveResp delay 100.0000 ms ;
+        AssignNAD { WDA } delay 60.0000 ms ;
+        SlaveResp delay 60.0000 ms ;
+        AssignFrameIdRange { WDA, 0 } delay 60.0000 ms ;
+        SlaveResp delay 60.0000 ms ;
+    }
+    Diagnostic {
+        MasterReq delay 60.0000 ms ;
+        SlaveResp delay 60.0000 ms ;
+    }
+}
+Signal_encoding_types {
+    W_ANGLE {
+        physical_value,0,511,1.0000,0.0000,"°" ;
+    }
+    W_CMD_Coding {
+        logical_value,0x00,"Parking EPS" ;
+        logical_value,0x01,"Starter active" ;
+        logical_value,0x02,"Continuous wiping" ;
+        logical_value,0x03,"Service position" ;
+        logical_value,0x04,"Intermittent wiping" ;
+        logical_value,0x05,"Parking UWL" ;
+        logical_value,0x06,"Parking OWL" ;
+        logical_value,0x07,"Parking Wait EPS" ;
+    }
+    W_FAILURE_Coding {
+        logical_value,0x00,"No failure" ;
+        logical_value,0x01,"Hardware failure" ;
+        logical_value,0x02,"Under/over voltage" ;
+        logical_value,0x04,"High temperature" ;
+        logical_value,0x08,"Blocking detection" ;
+        logical_value,0x10,"Angle sensor failure" ;
+        logical_value,0x20,"Heaviness detection" ;
+        logical_value,0x40,"LIN communication failure" ;
+        logical_value,0x80,"Segment not explicit" ;
+    }
+    W_INT_TIME_Coding {
+        physical_value,0,12,3.0000,3.0000,"s" ;
+    }
+    W_SPEED_Coding {
+        logical_value,0x00,"55 °/s" ;
+        logical_value,0x01,"70 °/s" ;
+        logical_value,0x02,"85 °/s" ;
+        logical_value,0x03,"100 °/s" ;
+        logical_value,0x04,"115 °/s" ;
+        logical_value,0x05,"130 °/s" ;
+        logical_value,0x06,"145 °/s" ;
+        logical_value,0x07,"160 °/s" ;
+        logical_value,0x08,"175 °/s" ;
+        logical_value,0x09,"190 °/s" ;
+        logical_value,0x0A,"205 °/s" ;
+        logical_value,0x0B,"220 °/s" ;
+        logical_value,0x0C,"235 °/s" ;
+        logical_value,0x0D,"250 °/s" ;
+        logical_value,0x0E,"260 °/s" ;
+        logical_value,0x0F,"270 °/s" ;
+    }
+    W_STATE_Coding {
+        logical_value,0x00,"Parking position" ;
+        logical_value,0x01,"Moving upwards" ;
+        logical_value,0x02,"Moving downwards" ;
+        logical_value,0x03,"Lower reversing position" ;
+        logical_value,0x04,"Upper reversing position" ;
+        logical_value,0x05,"Service position" ;
+        logical_value,0x06,"H-Bridge short" ;
+        logical_value,0x07,"free" ;
+    }
+}
+Signal_representation {
+    W_ANGLE:W_POS;
+    W_CMD_Coding:W_CMD;
+    W_FAILURE_Coding:W_FAILURE;
+    W_INT_TIME_Coding:W_INT_TIME;
+    W_SPEED_Coding:W_SPEED;
+    W_STATE_Coding:W_STATE;
+}

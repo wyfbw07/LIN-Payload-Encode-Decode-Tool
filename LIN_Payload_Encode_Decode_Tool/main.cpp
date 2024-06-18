@@ -13,21 +13,27 @@
 int main()
 {
 	// timing mechanism
-	clock_t before_operation, after_operation;
+    clock_t parserBeforeOperation, parserAfterOperation;
+	clock_t totalBeforeOperation, totalAfterOperation;
+    // mark the time before we start
+    parserBeforeOperation = clock(); totalBeforeOperation = clock();
 
 	int operationChoice = 2;
 	// Create a class to store LDF info
 	LdfParser ldfFile;
-
-	// mark the time before we start
-	before_operation = clock();
-	try {
-		 ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.0.ldf");
-		// ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.1.ldf");
-		// ldfFile.parse("/Users/wyfbw07/Downloads/Volvo/Test_Database_Files/exampleLIN2.2.ldf");
+    
+    try {
+        // Access the sample ldf
+        std::string projectDir = "/Users/Local/LIN_Payload_Encode_Decode_Tool"; // REPLACE THIS to your project directory
+        std::string sampleLdfName = "exampleLIN_2.0_Large.ldf";
+        ldfFile.parse(projectDir + "/sample_ldf/" + sampleLdfName);
+        
+        // Show parser results
 		std::cout << ldfFile;
-		// mark the time once we are done
-		after_operation = clock();
+        
+        // mark the time once we are done
+        parserAfterOperation = clock();
+        
 		// MARK: - Function call choices
 		switch (operationChoice) {
 		case 1:
@@ -91,10 +97,15 @@ int main()
 		std::cout << "[Exception catched] " << err.what() << '\n';
 		return -1;
 	}
-
+    
+    // mark the time once we are done
+    totalAfterOperation = clock();
+    
 	// print statistics
-	double operation_time = double(after_operation - before_operation) / CLOCKS_PER_SEC;
-	std::cerr << "Operation time:     " << operation_time << std::endl;
+	double parserOperationTime = double(parserAfterOperation - parserBeforeOperation) / CLOCKS_PER_SEC;
+    double totalOperationTime = double(totalAfterOperation - totalBeforeOperation) / CLOCKS_PER_SEC;
+	std::cout << "\nParser operation time:\t" << parserOperationTime << std::endl;
+    std::cout << "Total operation time:\t" << totalOperationTime << std::endl;
 	std::cout << "----------------------END----------------------" << std::endl;
 	return 0;
 }
