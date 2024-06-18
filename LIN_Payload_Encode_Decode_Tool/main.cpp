@@ -18,7 +18,7 @@ int main()
     // mark the time before we start
     parserBeforeOperation = clock(); totalBeforeOperation = clock();
 
-	int operationChoice = 2;
+	int operationChoice = 1;
 	// Create a class to store LDF info
 	LdfParser ldfFile;
     
@@ -39,11 +39,11 @@ int main()
 		case 1:
 		{
 			// Decode
-			int msgSize = 4;
+			int frameSize = 4;
 			int frameId = 0x20;
 			unsigned char rawPayload[8] = { 0xa0, 0x0, 0x0, 0x08, 0xff, 0xff, 0xff, 0xff };
 			std::map<std::string, std::tuple<double, std::string, LinSigEncodingValueType> > result;
-			result = ldfFile.decode(frameId, msgSize, rawPayload);
+			result = ldfFile.decode(frameId, frameSize, rawPayload);
 			// Print decoded message info
 			std::cout << "-----------------------------------------------" << std::endl;
 			std::cout << "Decoded signal values: \n";
